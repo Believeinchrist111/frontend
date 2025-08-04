@@ -1,3 +1,7 @@
+
+/* Stylings for the HomeNav Component */
+
+
 nav#home-nav {
   height: 100px;
   width: 100vw;
@@ -24,8 +28,11 @@ div#menu-container {
 div#menu-container #menu-image {
   height: 40px;
   width: 40px;
+}
+
+.profile-image{
+  object-fit: cover;
   border-radius: 30px;
-  background-color: #121212;
 }
 
 div#menu-container #logo {
@@ -95,6 +102,12 @@ div#profile-info button {
   margin-right: 20px;
 }
 
+
+
+/* Stylings for the TweetCard Component */
+
+
+
 p#tweet-message{
   font-size: .95em;
   line-height: 20px;
@@ -119,6 +132,12 @@ div#tweet-interactions svg{
   width: 20px;
 }
 
+
+
+/* Stylings for the HomeFooterNav Component */
+
+
+
 nav#home-footer-nav{
   display: flex;
   justify-content: space-around;
@@ -134,13 +153,72 @@ nav#home-footer-nav{
 nav#home-footer-nav button{
   background-color: transparent;
   border: none;
-  height: 30px;
-  width: 30px;
+  height: 25px;
+  width: 25px;
 }
 
 nav#home-footer-nav button svg{
   fill: #e7e9ea;
 }
+
+
+
+/* Stylings for the SideNav Component */
+
+
+nav#side-nav{
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px 15px;
+  height: 100vh;
+  width: 290px;
+  background-color: #000000;
+  border-right: .5px solid #6E767D;
+  z-index: 3;
+}
+
+div#menu-lists{
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+div#following-followers-container{
+  margin-top: 10px;
+}
+
+div#following-followers-container button{
+  background-color: transparent;
+  color: #6E767D;
+  width: 100px;
+  border: none;
+  text-align: left;
+}
+
+div#menu-lists button{
+  display: flex;
+  background-color: transparent;
+  place-items: center;
+  color: #e7e9ea;
+  font-size: 1.3em;
+  font-weight: 600;
+  text-align: left;
+  margin: 15px 0;
+  border: none;
+
+}
+
+div#menu-lists button svg{
+  margin-right: 20px;
+  height: 30px;
+  width: 30px;
+  fill: #e7e9ea;
+ 
+}
+
+
+
 
 /* .sign-card{
   display: flex;
