@@ -1,16 +1,23 @@
+'use client'
+
 import "./page.css";
 import TweetCard from "./ui/tweet-card.js"
 import HomeNav from "./ui/home-nav.js"
 import HomeFooterNav from "./ui/home-footer-nav.js"
 import SideNav from "./ui/side-nav";
 
+import { useState } from "react";
+
+
 export default function Home() {
+  const [toggleNav, setToggleNav] = useState(false)
+  
   return (
     <>
-      <HomeNav/>
+      <HomeNav toggleNav={toggleNav} setToggleNav={setToggleNav}/>
       <TweetCard/>
       <HomeFooterNav/>
-      <SideNav/>
+      <SideNav toggleNav={toggleNav} setToggleNav={setToggleNav}/>
     </>
   );
 }

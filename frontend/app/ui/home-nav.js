@@ -1,10 +1,10 @@
 import Image from "next/image"
 
-export default function HomeNav() {
+export default function HomeNav({toggleNav, setToggleNav}) {
  return (
   <nav id="home-nav">
    <div id="menu-container">
-    <div id="menu-image">
+    <div id="menu-image" onClick={() => {setToggleNav(!toggleNav)}}>
      <Image
      src="/emma.jpeg"
      height={40}
