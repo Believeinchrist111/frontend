@@ -37,4 +37,3 @@ jobs:
 
       - name: 'curl request to localhost for homepage'
         run: curl -f http://localhost:3000 || (cat dev.log && exit 1)
-
