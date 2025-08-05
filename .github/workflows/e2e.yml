@@ -41,6 +41,10 @@ jobs:
   FAST-API-build:
     runs-on: ubuntu-latest
 
+    # use a fake db URL
+    env:
+      DATABASE_URL: "sqlite:///./test.db"
+
     defaults:
       run:
         working-directory: backend/API
@@ -58,6 +62,9 @@ jobs:
         run : |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Debug DATABASE_URL
+        run: python -c "import os; print('DATABASE_URL in CI =', os.getenv('DATABASE_URL'))"
 
       - name : Run Uvicorn
         run : |
