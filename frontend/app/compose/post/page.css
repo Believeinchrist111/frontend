@@ -33,5 +33,27 @@ button#post-button {
   border: none;
   color: #eff3f4;
   font-weight: 800;
-  font-size: .8em;
+  font-size: 0.8em;
+}
+
+div#textarea-container {
+  display: flex;
+  margin-left: 20px;
+}
+
+div#textarea-container .textarea-profile-image {
+  border-radius: 50px;
+  margin-right: 10px;
+}
+
+div#textarea-container textarea.post-textarea {
+  position: relative;
+  top: 10px;
+  font-size: 1.5em;
+  font-weight: 600;
+  background-color: #000000;
+  color: #eff3f4;
+  border: none;
+  height: 100px;
+  width: 80%;
 }
