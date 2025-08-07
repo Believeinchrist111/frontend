@@ -1,9 +1,5 @@
 /* Stylings for the HomeNav Component */
-/* section#app-wrapper{
-  position: relative;
-  max-width: 700px;
-  height: max-content;
-} */
+
 nav#home-nav {
   height: 100px;
   width: 100vw;
@@ -65,6 +61,7 @@ div#for-follow-tabs button {
 
 section#posts-section {
   margin-top: 100px;
+  border-right: 1px solid #2f3336;
 }
 
 div#compose-section {
@@ -77,6 +74,7 @@ div#tweet-card {
 }
 
 div#profile-info {
+  position: relative;
   display: flex;
   place-items: center;
   padding-left: 15px;
@@ -140,13 +138,6 @@ div#tweet-interactions svg {
 
 /* Stylings for the HomeFooterNav Component */
 
-div#nav-wrapper {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 50px;
-}
-
 nav#home-footer-nav {
   position: fixed;
   background-color: #000000;
@@ -154,6 +145,17 @@ nav#home-footer-nav {
   bottom: 0;
   left: 0;
   width: 100vw;
+}
+
+div#nav-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 50px;
+}
+
+div#nav-wrapper button h1 {
+  display: none;
 }
 
 nav#home-footer-nav button {
@@ -179,9 +181,17 @@ button#profile-button {
   display: none;
 }
 
-.nav-profile-image{
+.nav-profile-image {
   display: none;
-  }
+}
+
+div#nav-handle-container {
+  display: none;
+}
+
+.three-dots-icon {
+  display: none;
+}
 
 /* Stylings for the SideNav Component */
 
@@ -260,6 +270,7 @@ button#compose-button svg {
     height: 50px;
     width: calc(100vw - 50px);
     margin-left: 60px;
+    border-right: 1px solid #2f3336;
   }
 
   div#menu-container {
@@ -337,7 +348,9 @@ button#compose-button svg {
 
   nav#home-footer-nav {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     border-right: 1px solid #2f3336;
     border-top: none;
     height: 100vh;
@@ -375,19 +388,131 @@ button#compose-button svg {
     display: none;
   }
 
-  .nav-profile-image{
-    display: block;
-    position: fixed;
-    bottom: 20px;
-    border-radius: 20px;
-    align-self: center;
+  div#nav-wrapper button h1 {
+    display: none;
   }
 
+  div#profile-container {
+    padding: 20px;
+  }
+
+  .nav-profile-image {
+    display: block;
+    border-radius: 20px;
+  }
+
+  div#nav-handle-container {
+    display: none;
+  }
+
+  .three-dots-icon {
+    display: none;
+  }
 }
 
 /* //////////////////////////////////////////////////////// */
 
 @media screen and (min-width: 43.75em) {
+  /* Stylings for the HomeNav Component */
+
+  nav#home-nav {
+    width: 640px;
+    position: fixed;
+    left: calc((100vw - 580px) / 2);
+    margin-left: 0px;
+  }
+
+  /* Stylings for the HomeFooterNav Component */
+
+  nav#home-footer-nav {
+    position: fixed;
+    left: calc((100vw - 700px) / 2);
+  }
+
+  div#nav-wrapper button h1 {
+    display: none;
+  }
+}
+
+/* //////////////////////////////////////////////////////////////////////////////////////// */
+
+@media screen and (min-width: 75em) {
+  /* Stylings for the HomeFooterNav Component */
+
+  nav#home-footer-nav {
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    left: calc((100vw - 1180px) / 2);
+    width: 300px;
+  }
+
+  div#nav-wrapper {
+    padding-top: 70px;
+    align-items: flex-start;
+  }
+
+  div#nav-wrapper button {
+    display: flex;
+    height: 25px;
+    align-items: flex-end;
+    width: max-content;
+  }
+
+  div#nav-wrapper button svg {
+    width: 25px;
+    margin-right: 15px;
+  }
+
+  div#nav-wrapper button h1 {
+    display: block;
+    color: #eff3f4;
+  }
+
+  #footer-nav-compose-button {
+    display: flex;
+    place-content: center;
+    place-items: center;
+    width: 200px;
+  }
+
+  #footer-nav-compose-button svg.post-icon {
+    display: none;
+  }
+
+  #nav-wrapper #footer-nav-compose-button button h1 {
+    color: #000000;
+  }
+
+  div#profile-container {
+    display: flex;
+    padding: 20px;
+  }
+
+  .nav-profile-image {
+    position: relative;
+    bottom: 0px;
+    margin-right: 10px;
+  }
+
+  div#profile-container .three-dots-icon {
+    margin-left: 40px;
+    fill: #eff3f4;
+    width: 20px;
+  }
+
+  div#nav-handle-container {
+    display: block;
+  }
+
+  div#nav-handle-container div#user-account-name {
+    display: block;
+    color: #6e767d;
+  }
+
+  .three-dots-icon {
+    display: block;
+  }
 }
 
 /* .sign-card{
