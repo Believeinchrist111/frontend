@@ -1,10 +1,9 @@
-# database.py
 import os
 from fastapi import FastAPI, Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
-#DATABASE_URL = " link to db here "
+#DATABASE_URL = "link will be shared "
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
 
 engine = create_engine(DATABASE_URL)

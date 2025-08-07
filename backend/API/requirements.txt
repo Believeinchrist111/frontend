@@ -10,3 +10,4 @@ pydantic_settings
 pydantic_extra_types
 phonenumbers
 python-multipart
+alembic
