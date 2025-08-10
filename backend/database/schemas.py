@@ -9,10 +9,26 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
-# for signup, we will need a ot of info
+# for signup, we will need a of info
 class UserCreate(BaseModel):
-    first_name: constr(strip_whitespace=True, min_length=1, max_length=100)
-    last_name: constr(strip_whitespace=True, min_length=1, max_length=100)
+    first_name: Annotated[
+    str,
+    Field(
+        min_length=3,
+        max_length=30,
+        pattern=r'^[a-zA-Z0-9_]+$',
+        strip_whitespace=True
+    )
+]
+    last_name: Annotated[
+    str,
+    Field(
+        min_length=3,
+        max_length=30,
+        pattern=r'^[a-zA-Z0-9_]+$',
+        strip_whitespace=True
+    )
+]
     email: EmailStr
     username: Annotated[
         str,
@@ -76,3 +92,24 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # first_name: constr(strip_whitespace=True, min_length=1, max_length=100)
+    # last_name: constr(strip_whitespace=True, min_length=1, max_length=100)

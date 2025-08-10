@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from database import schemas, models
 from datetime import datetime, timezone
-from database.database import get_db
-from . import oauth2
-from typing import List, Optional
+# from database.database import get_db
+from utility import oauth2
+from typing import List, Optional, Annotated
+from database.database import SessionLocal
 
 
 # Create an APIRouter for posts with a common prefix and tag
@@ -14,9 +15,18 @@ router = APIRouter(
     tags=['Posts']
 )
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+db_dependency = Annotated[Session, Depends(get_db)]
+
 # this is what gets displayed on the timeline
 @router.get("", response_model=List[schemas.Post])
-def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
+def get_posts(db: db_dependency, current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
 
     posts = ( db.query(models.Post)
         .options(joinedload(models.Post.owner))  # fetches user info with post
@@ -31,7 +41,7 @@ def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.
 
 # Route to create a new post
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def create_post(post: schemas.PostCreate, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
     new_post = models.Post(
         content=post.content,
         reply_to_post_id=post.reply_to_post_id,
@@ -55,7 +65,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), current
 
 # only a user can dleete his own post
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def delete_post(id: int, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
     query_post = db.query(models.Post).filter(models.Post.id == id)
     deleted_post = query_post.first()
     if not deleted_post:
@@ -73,7 +83,7 @@ def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depe
 
 # Route to update a post by ID
 @router.put("/{id}", response_model=schemas.Post)
-def update_post(id: int, post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def update_post(id: int, post: schemas.PostCreate, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
     query_post = db.query(models.Post).filter(models.Post.id == id)
     filtered_post = query_post.first()
     if filtered_post is None:

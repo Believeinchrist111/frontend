@@ -1,13 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Annotated
 from sqlalchemy.orm import Session
+from database.database import SessionLocal
 from database import models, schemas
-from database.database import get_db
-from database import utils
+from utility import utils
 
 router = APIRouter(prefix="/signup")
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+db_dependency = Annotated[Session, Depends(get_db)]
+
 @router.post("", status_code=status.HTTP_201_CREATED, response_model = schemas.UserResponse)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def create_user(user: schemas.UserCreate, db: db_dependency):
     hashed_password = utils.hash_password(user.password)
     user.password = hashed_password
     new_user = models.User(**user.model_dump())
