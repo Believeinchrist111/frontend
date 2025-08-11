@@ -47,7 +47,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend/API
+        working-directory: backend
 
     steps:
       - name: Checkout code
