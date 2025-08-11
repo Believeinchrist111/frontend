@@ -30,7 +30,7 @@ class Media(Base):
     file_url = Column(String(255), nullable=False)
 
     post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
-    
+
     post = relationship("Post", back_populates="media_items")
 
 

@@ -4,7 +4,7 @@ from database.database import engine, SessionLocal
 from sqlalchemy.orm import Session
 
 
-from database import models 
+from database import models
 from endpoints import auth
 from endpoints import user
 from endpoints import post
