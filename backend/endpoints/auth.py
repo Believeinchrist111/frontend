@@ -11,7 +11,6 @@ from fastapi.security import OAuth2PasswordBearer
 from database import models
 from database import schemas
 from utility import utils
-from utility.config import Settings
 from utility import oauth2
 
 router = APIRouter(
@@ -19,11 +18,7 @@ router = APIRouter(
     tags=["auth"]
 )
 
-settings = Settings()
-SECRET_KEY = settings.secret_key
-ALGORITHM = settings.algorithm
-
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_db():
@@ -48,7 +43,7 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
 
 
 # Endpoint for signing in or logging into an account
-@router.post("/login", status_code= status.HTTP_201_CREATED)
+@router.post("/login", response_model = schemas.Token)
 async def login(user_cred: schemas.LoginRequest, db: db_dependency):
 
     user = db.query(models.User).filter(
@@ -68,35 +63,11 @@ async def login(user_cred: schemas.LoginRequest, db: db_dependency):
     access_token = oauth2.create_access_token(data = {'user_id': user.id})
     return {"access_token" : access_token, "token_type": "bearer"}
 
+@router.get("/users/user/", response_model = schemas.UserCreate)
+async def read_user(current_user: schemas.UserCreate = Depends(oauth2.get_current_user)):
+    return current_user
 
 
 
 
 
-# from fastapi import APIRouter, Depends, status, HTTPException, Response
-# from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-# from sqlalchemy.orm import Session
-# from database import database, models, utils, schemas
-
-# router = APIRouter(tags=['Authentication'])
-
-
-
-# @router.post('/login')
-# def login(user_cred: schemas.LoginRequest, db: Session = Depends(database.get_db)):
-
-#     user = db.query(models.User).filter(
-#         or_(
-#             models.User.email == user_cred.username,
-#             models.User.username == user_cred.username
-#         )).first()
-
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
-#     if not utils.verify(user_cred.password,user.password):
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
-
-#     access_token = oauth2.create_access_token(data = {'user_id': user.id})
-#     return {"access_token" : access_token, "token_type": "bearer"}
