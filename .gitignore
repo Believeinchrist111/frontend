@@ -46,5 +46,5 @@ backend/database/__pycache__
 backend/endpoints/__pycache__
 
 backend/env
-frontend/backend/utility/__pycache__
+backend/utility/__pycache__
 #backend/.env
