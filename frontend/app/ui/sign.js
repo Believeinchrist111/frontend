@@ -12,7 +12,7 @@ export default function SignUpOrIn() {
         <h2>Join today.</h2>
         <input type="text" placeholder="Sign up with Google" />
         <input type="text" placeholder="Sign up with Apple" />
-        <div className="divider"><hr />OR<hr /></div>
+        <div className="divider"><div /> OR <div /></div>
         <Link
           href='../sign-up'
           className="create-account"
