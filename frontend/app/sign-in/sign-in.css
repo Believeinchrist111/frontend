@@ -1,0 +1,77 @@
+div#signin-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 25px;
+  width: 250px;
+  margin-bottom: 20px;
+}
+
+input {
+  margin: 5px 0;
+  text-align: center;
+  height: 42px;
+  width: 260px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+div.divider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 260px;
+  margin: 20px 0;
+  color: white;
+}
+
+div.divider div {
+  width: 130px;
+  border-top: 1px solid #2f3336;
+}
+
+input.login-input {
+  background-color: #000000;
+  border: 1px solid #2f3336;
+  border-radius: 0px;
+  height: 60px;
+  color: white;
+  text-align: left;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+button.submit {
+  display: flex;
+  place-content: center;
+  place-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  height: 50px;
+  width: 250px;
+  border-radius: 30px;
+  border: none;
+  margin-top: 50px;
+  cursor: pointer;
+}
+
+
+p.dont-para {
+  margin-top: 20px;
+  width: 250px;
+  font-size: 15px;
+  color: #6e767d;
+}
+
+p.dont-para a {
+  color: #1da1f2;
+}

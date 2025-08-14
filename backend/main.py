@@ -9,11 +9,23 @@ from endpoints import auth
 from endpoints import user
 from endpoints import post
 from utility.oauth2 import get_current_user
+from fastapi.middleware.cors import CORSMiddleware
 
-
-
+origins = [ "*" ]
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
+
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(post.router)
@@ -61,15 +73,3 @@ async def user(user: user_dependency, db: db_dependency):
 
 
 
-# from fastapi.middleware.cors import CORSMiddleware
-
-# origins = [ "*" ]
-
-
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )

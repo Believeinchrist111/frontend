@@ -1,10 +1,10 @@
 div#sign-card {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin: auto;
-  margin-top: 80px;
-  /* width: 400px; */
+  width: 100vw;
+  height: 100vh;
 }
 
 h1 {
