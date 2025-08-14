@@ -4,9 +4,8 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
 from database.database import SessionLocal
+from database.database import db_dependency
 from fastapi.security import OAuth2PasswordRequestForm
-
-
 
 from database import models
 from database import schemas
@@ -19,17 +18,6 @@ router = APIRouter(
 )
 
 # oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-db_dependency = Annotated[Session, Depends(get_db)]
-
 
 # Endpoint for signing up or creating an account
 @router.post('/signup', status_code=status.HTTP_201_CREATED)

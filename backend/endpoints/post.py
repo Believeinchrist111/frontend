@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from database import schemas, models
 from datetime import datetime, timezone
-# from database.database import get_db
+from database.database import db_dependency
 from utility import oauth2
 from typing import List, Optional, Annotated
 from database.database import SessionLocal
@@ -14,15 +14,6 @@ router = APIRouter(
     prefix="/posts",
     tags=['Posts']
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-db_dependency = Annotated[Session, Depends(get_db)]
 
 # this is what gets displayed on the timeline
 @router.get("", response_model=List[schemas.Post])
