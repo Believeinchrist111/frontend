@@ -65,7 +65,9 @@ class PostBase(BaseModel):
     # published: bool = True ? do we want to support drafts ?
 
 
-# can have more than one media or ?
+# This is the request model
+# the formt in which posts are created
+
 class PostCreate(PostBase):
     media_url: Optional[str] = None
     media_items: Optional[List[MediaItem]] = None
@@ -75,6 +77,11 @@ class PostCreate(PostBase):
         if not self.content and not self.media_url and not self.media_items:
             raise ValueError("Post must have at least content or media.")
         return self
+
+# This is the resonse model for a post
+# when you are creating a post, the user only cares about his input.
+# when it is being displayed, that's when other additional stuff are displayed
+# like the time it was created etc.
 
 class Post(PostBase):
     id: int
@@ -94,20 +101,31 @@ class TokenData(BaseModel):
     id: Optional[str] = None
 
 
+# so for a message request model
+# this is the format we have when we are sending a message to someone
+# in whoever's DM that we are in, that will be the receiver's id ( and that's compulsory )
+# and then we can send either a text or media
 
+# we treat it as a base class
+class MessageBase(BaseModel):
+    sender_id: int
+    receiver_id: int
+    content: Optional[str] = None
+    reply_to_message_id: Optional[int] = None
+    media_id: Optional[int] = None
 
+class MessageCreate(MessageBase):
+    pass
 
+# what will be displayed
+# when we type a message based on messagecreate model
+# this is what will be displayed with extra implicit details
+class MessageResponse(MessageBase):
+    id: int
+    created_at: datetime
+    status: str
 
-
-
-
-
-
-
-
-
-
-
+    model_config = ConfigDict(from_attributes=True)
 
 
 

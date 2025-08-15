@@ -3,8 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
-from database.database import SessionLocal
-from database.database import db_dependency
+from database.database import SessionLocal, get_db
 from fastapi.security import OAuth2PasswordRequestForm
 
 from database import models
@@ -16,6 +15,8 @@ router = APIRouter(
     # prefix="/auth",
     tags=["auth"]
 )
+
+db_dependency = Annotated[Session, Depends(get_db)]
 
 # oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 

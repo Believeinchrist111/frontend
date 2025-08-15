@@ -4,10 +4,13 @@ from sqlalchemy.orm import Session
 from database.database import SessionLocal
 from database import models, schemas
 from utility import utils
-from database.database import db_dependency
+from utility.oauth2 import get_current_user
 from database.database import get_db
 
-router = APIRouter(prefix="/signup")
+router = APIRouter(prefix="/users")
+
+user_dependency = Annotated[Session, Depends(get_current_user)]
+db_dependency = Annotated[Session, Depends(get_db)]
 
 
 # we can use this internally for our own debugs
@@ -18,3 +21,9 @@ def get_user(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No User Found")
 
     return user
+
+@router.get("/", status_code = status.HTTP_200_OK)
+async def user(user: user_dependency, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    return {"User": user}

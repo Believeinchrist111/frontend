@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from database import schemas, database, models
 from sqlalchemy.orm import Session
 from .config import Settings
-from database.database import SessionLocal
+from database.database import get_db
 
 
 settings = Settings()
@@ -14,14 +14,6 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='token')
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 
 def create_access_token(data: dict):

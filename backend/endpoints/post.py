@@ -3,10 +3,9 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from database import schemas, models
 from datetime import datetime, timezone
-from database.database import db_dependency
 from utility import oauth2
 from typing import List, Optional, Annotated
-from database.database import SessionLocal
+from database.database import SessionLocal, get_db
 
 
 # Create an APIRouter for posts with a common prefix and tag
@@ -14,6 +13,8 @@ router = APIRouter(
     prefix="/posts",
     tags=['Posts']
 )
+
+db_dependency = Annotated[Session, Depends(get_db)]
 
 # this is what gets displayed on the timeline
 @router.get("", response_model=List[schemas.Post])
@@ -65,7 +66,7 @@ def delete_post(id: int, db: db_dependency, current_user: int = Depends(oauth2.g
             detail=f'Post with id {id} was not found'
         )
     if deleted_post.owner_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorised to perform this action")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorised to delete post")
 
     db.delete(deleted_post)
     db.commit()
@@ -83,7 +84,7 @@ def update_post(id: int, post: schemas.PostCreate, db: db_dependency, current_us
             detail=f"Post with ID:{id} does not exist"
         )
     if filtered_post.owner_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorised to perform this action")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorised to edit post")
 
     data = post.model_dump(exclude_unset=True)
     query_post.update(data, synchronize_session=False)
@@ -93,3 +94,4 @@ def update_post(id: int, post: schemas.PostCreate, db: db_dependency, current_us
     updated_post = query_post.first()
 
     return updated_post
+
