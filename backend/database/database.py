@@ -12,16 +12,11 @@ engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-<<<<<<< HEAD
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-=======
-Base = declarative_base()
-
->>>>>>> b9885e6 (application loads without the homepage showing if not signed in)
 
 
