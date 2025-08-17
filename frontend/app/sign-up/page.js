@@ -1,7 +1,7 @@
 import "./sign-up.css"
 // import { useNavigate } from 'react-router-dom'
 
-export default function SignUpOrIn() {
+export default function SignUp() {
   // const [username, setUsername] = useState('')
   // const [password, setPassword] = useState('')
   // const [error, setError] = useState('')

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import "./sign.css"
-import SignUp from '../sign-up/page'
+// import SignUp from '../sign-up/page'
 
 
 export default function SignUpOrIn() {
