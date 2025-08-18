@@ -17,11 +17,11 @@ ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 conf = ConnectionConfig(
-    MAIL_USERNAME="you@example.com",
-    MAIL_PASSWORD="yourpassword",
-    MAIL_FROM="you@example.com",
+    MAIL_USERNAME="random",
+    MAIL_PASSWORD="random",
+    MAIL_FROM="random@random.com",
     MAIL_PORT=587,
-    MAIL_SERVER="smtp.gmail.com",
+    MAIL_SERVER="random.random.com",
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
     USE_CREDENTIALS=True
@@ -73,6 +73,16 @@ async def send_verification_email(email: str, token: str):
         subject="Verify your email",
         recipients=[email],
         body=f"Click here to verify your email: {verification_link}",
+        subtype="plain"
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)
+
+async def send_comfirmation_email(email: str):
+    message = MessageSchema(
+        subject="email verification",
+        recipients=[email],
+        body=f"Email successfuly verified",
         subtype="plain"
     )
     fm = FastMail(conf)

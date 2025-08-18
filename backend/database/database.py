@@ -5,9 +5,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 
 
-#DATABASE_URL = "sqlite:///./test.db"
-#DATABASE_URL = "mysql+pymysql://root:password@localhost:3306/believe"
-DATABASE_URL = "mysql+pymysql://joe:Believe1111+@192.168.64.7:3306/JESUS"
+DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

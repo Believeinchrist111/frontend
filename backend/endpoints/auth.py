@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from database.database import SessionLocal, get_db
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import BackgroundTasks
 
 from database import models
 from database import schemas
@@ -26,7 +27,10 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
     hashed_password = utils.hash_password(user.password)
     user.password = hashed_password
     new_user = models.User(**user.model_dump())
+
     db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
 
     token = oauth2.create_verification_token(new_user.email)
 
@@ -34,21 +38,33 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
         return {"message": "token cannot be created"}
 
     # token sent to new email created. user clicks on link to trigger /verify endpoint
-    await oauth2.send_verification_email(new_user.email, token)
+    background_tasks.add_task(oauth2.send_verification_email, new_user.email, token)
 
-    db.commit()
-    db.refresh(new_user)
     return new_user
 
 # this is triggered when the user clicks on the token to verify
 @router.get("/verify")
-def verify_email(token: str):
+def verify_email(token: str, db: Session = Depends(db_dependency)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
         if email is None:
-            raise HTTPException(status_code=400, detail="Invalid token")
+            raise HTTPException(status_code=400, detail="Invalid Email") #in future, we will send this back as email
+
+        # Look up the user
+        user = db.query(models.User).filter(models.User.email == email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if user.is_verified:
+            return {"message": "Email already verified"} # email in future
+
+        user.is_verified = True
+        db.commit()
+        db.refresh(user)
+        # send_comfirmation_email(email: str). this for future work
         return {"message": "Email verified successfully"}
+
     except JWTError:
         raise HTTPException(status_code=400, detail="Invalid or expired")
 
