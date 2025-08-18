@@ -13,40 +13,13 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   if (!username || !password) {
-  //     setError("Username and password are required");
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch("http://127.0.0.1:8000/sign-in", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //       body: new URLSearchParams({ username, password }),
-  //     });
-
-  //     setLoading(false);
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       console.log(data)
-  //       Cookies.set("token", data.access_token,);
-  //       router.push("/"); // middleware allows now since there is a token
-  //     } else {
-  //       const errorData = await response.json();
-  //       setError(errorData.detail || "Authentication failed!");
-  //     }
-  //   } catch {
-  //     setLoading(false);
-  //     setError("An error occurred. Please try again.");
-  //   }
-  // };
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!username || !password) {
+      setError("Username and password are required");
+      return;
+    }
     setLoading(true);
 
     const formData = new FormData();
@@ -59,16 +32,14 @@ export default function SignIn() {
         body: formData,
         credentials: "include", // important: store cookie
       });
-
       if (res.ok) {
         router.push("/"); // Middleware will detect cookie and allow
       } else {
-        const data = await res.json();
-        alert(data.detail || "Login failed");
+        const errorData = await response.json();
+        setError(errorData.detail || "Authentication failed!");
       }
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -79,6 +50,10 @@ export default function SignIn() {
 
     <form onSubmit={handleSubmit}>
       <div id="signin-card">
+        <button className="previous-page-button" onClick={() => router.push("/sign-up-in")}>
+          <svg viewBox="0 0 24 24" ><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg>
+        </button>
+
         <h1>Sign in to Believe</h1>
         <input type="text" placeholder="Sign up with Google" />
         <input type="text" placeholder="Sign up with Apple" />

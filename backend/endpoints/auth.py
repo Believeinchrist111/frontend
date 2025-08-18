@@ -28,7 +28,7 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-# oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
+
 
 # Endpoint for signing up or creating an account
 @router.post('/signup', status_code=status.HTTP_201_CREATED)

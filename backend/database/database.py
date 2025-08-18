@@ -1,12 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from typing import Annotated
 
 
-DATABASE_URL = "sqlite:///./test.db"
-#DATABASE_URL = "mysql+pymysql://root:password@localhost:3306/believe"
+# DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = "mysql+pymysql://root:123456@localhost:3306/believe"
 
 engine = create_engine(DATABASE_URL)
 

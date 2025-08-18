@@ -8,6 +8,17 @@ div#signin-card {
   padding: 0 20px;
 }
 
+button.previous-page-button{
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 20px;
+  height: 20px;
+  background-color: #000000;
+  fill: white;
+  border: none;
+}
+
 h1 {
   font-size: 25px;
   width: 250px;
