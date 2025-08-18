@@ -11,3 +11,6 @@ pydantic_extra_types
 phonenumbers
 python-multipart
 alembic
+fastapi_mail
+aiosmtplib
+email-validator

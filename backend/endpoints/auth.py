@@ -6,6 +6,7 @@ from starlette import status
 from database.database import SessionLocal
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from fastapi.responses import JSONResponse
+from fastapi import BackgroundTasks
 
 from database import models
 from database import schemas
@@ -40,6 +41,38 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
     db.commit()
     db.refresh(new_user)
 
+    token = oauth2.create_verification_token(new_user.email)
+
+    if token is None:
+        return {"message": "token cannot be created"}
+
+    background_tasks.add_task(oauth2.send_verification_email, new_user.email, token)
+
+
+@router.get("/verify")
+def verify_email(token: str, db: Session = Depends(db_dependency)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=400, detail="Invalid Email") #in future, we will send this back as email
+
+        # Look up the user
+        user = db.query(models.User).filter(models.User.email == email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if user.is_verified:
+            return {"message": "Email already verified"} # email in future
+
+        user.is_verified = True
+        db.commit()
+        db.refresh(user)
+        # send_comfirmation_email(email: str). this for future work
+        return {"message": "Email verified successfully"}
+
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid or expired")
 
 
 # Endpoint for signing in or logging into an account
@@ -64,17 +97,17 @@ async def login_for_access_token(
     access_token = oauth2.create_access_token(
         data={'user_id': user.id},
     )
-    
+
     print('the token in the sign in endpoint')
     print(access_token)
     print('the token in the sign in endpoint')
-    
+
     response = JSONResponse(content={
         "message": "Login successful",
         "access_token": access_token,
         "token_type": "bearer"
     })
-    
+
     response.set_cookie(
         key="token",
         value=access_token,
@@ -85,7 +118,7 @@ async def login_for_access_token(
     )
     return response
 
-    
+
 @router.get("/verify-token")
 async def verify_token(token: str = Depends(oauth2_bearer)):
     print("the token in the verify token endpoint")

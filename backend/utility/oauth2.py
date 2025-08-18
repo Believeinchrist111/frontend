@@ -6,6 +6,7 @@ from database import schemas, database, models
 from sqlalchemy.orm import Session
 from .config import Settings
 from database.database import get_db
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 
 settings = Settings()
@@ -14,6 +15,17 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='sign-in')
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
+
+conf = ConnectionConfig(
+    MAIL_USERNAME="you@example.com",
+    MAIL_PASSWORD="yourpassword",
+    MAIL_FROM="you@example.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="random.random.com",
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    USE_CREDENTIALS=True
+)
 
 
 def create_access_token(data: dict):
@@ -25,7 +37,7 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
     return encoded_jwt
-  
+
 
 # def verify_access_token(credentials_exception, token: str = Depends(oauth2_bearer)):
 #     try:
@@ -67,3 +79,31 @@ def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(
     user = db.query(models.User).filter(models.User.id == token.id).first()
 
     return user
+
+
+def create_verification_token(email: str):
+    expire = datetime.utcnow() + timedelta(hours=24)
+    payload = {"sub": email, "exp": expire}
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+async def send_verification_email(email: str, token: str):
+    verification_link = f"http://localhost:8000/verify?token={token}"
+    message = MessageSchema(
+        subject="Verify your email",
+        recipients=[email],
+        body=f"Click here to verify your email: {verification_link}",
+        subtype="plain"
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)
+
+async def send_comfirmation_email(email: str):
+    message = MessageSchema(
+        subject="email verification",
+        recipients=[email],
+        body=f"Email successfuly verified",
+        subtype="plain"
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)

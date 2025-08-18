@@ -20,6 +20,7 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+    is_verified = Column(Boolean, default=False)
 
     posts = relationship("Post", back_populates="owner")
 
