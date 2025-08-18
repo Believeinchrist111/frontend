@@ -27,8 +27,30 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
     user.password = hashed_password
     new_user = models.User(**user.model_dump())
     db.add(new_user)
+
+    token = oauth2.create_verification_token(new_user.email)
+
+    if token is None:
+        return {"message": "token cannot be created"}
+
+    # token sent to new email created. user clicks on link to trigger /verify endpoint
+    await oauth2.send_verification_email(new_user.email, token)
+
     db.commit()
     db.refresh(new_user)
+    return new_user
+
+# this is triggered when the user clicks on the token to verify
+@router.get("/verify")
+def verify_email(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=400, detail="Invalid token")
+        return {"message": "Email verified successfully"}
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid or expired")
 
 
 # Endpoint for signing in or logging into an account
