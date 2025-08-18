@@ -77,7 +77,7 @@ export default function SignIn() {
 
         <button className='submit' type='submit' disabled={loading}>{loading ? 'logging in...' : 'Log in'}</button>
 
-        <p className="dont-para">Don't have an account?<Link href='../sign-up'> Sign-up</Link></p>
+        <p className="dont-para">Don&apos;t have an account?<Link href='../sign-up'> Sign-up</Link></p>
       </div>
     </form>
   );
