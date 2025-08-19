@@ -85,7 +85,7 @@ def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(
 def generate_verification_code(length: int = 6) -> str:
     return ''.join(secrets.choice("0123456789") for _ in range(length))
 
-def create_verification_entry(email: str, db: Session, user_id: int):
+def create_verification_entry(db: Session, user_id: int):
     code = generate_verification_code()
     expires_at = datetime.utcnow() + timedelta(minutes=10)
     db_verification = EmailVerification(

@@ -46,7 +46,14 @@ def signup_step1(data: schemas.SignUpStep1, db: Session = Depends(get_db)):
     )
     db.add(user)
     db.commit()
-    db.refresh(user)
+    db.refresh(user) # at this stage user is unverified
+
+    code = oauth2.create_verification_entry(db, new_user.user_id) # generates verification code
+
+    if code is None:
+        return {"message": "verification code creation failed"}
+
+    send_verification_code(new_user.email, code) # sends code, must check for errors
 
 
 # Step 2: Verify Email
