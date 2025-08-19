@@ -81,28 +81,30 @@ def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(
     return user
 
 
-def create_verification_token(email: str):
-    expire = datetime.utcnow() + timedelta(hours=24)
-    payload = {"sub": email, "exp": expire}
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+# we will be using code verification format
+def generate_verification_code(length: int = 6) -> str:
+    return ''.join(secrets.choice("0123456789") for _ in range(length))
 
-
-async def send_verification_email(email: str, token: str):
-    verification_link = f"http://localhost:8000/verify?token={token}"
-    message = MessageSchema(
-        subject="Verify your email",
-        recipients=[email],
-        body=f"Click here to verify your email: {verification_link}",
-        subtype="plain"
+def create_verification_entry(email: str, db: Session, user_id: int):
+    code = generate_verification_code()
+    expires_at = datetime.utcnow() + timedelta(minutes=10)
+    db_verification = EmailVerification(
+        user_id=user_id,
+        code=code,
+        expires_at=expires_at,
+        is_used=False
     )
-    fm = FastMail(conf)
-    await fm.send_message(message)
+    db.add(db_verification)
+    db.commit()
+    db.refresh(db_verification)
+    return code
 
-async def send_comfirmation_email(email: str):
+
+async def send_verification_code(email: str, code):
     message = MessageSchema(
         subject="email verification",
         recipients=[email],
-        body=f"Email successfuly verified",
+        body=f"Please enter the 6-digit code to verify your email : {code}",
         subtype="plain"
     )
     fm = FastMail(conf)

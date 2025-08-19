@@ -2,15 +2,73 @@ from pydantic import BaseModel, EmailStr, conint, ConfigDict, Field, constr, mod
 from datetime import datetime, date
 from typing import Annotated, Optional, List
 from pydantic_extra_types.phone_numbers import PhoneNumber
+from fastapi import Form
 
-# let's receive login request as JSON for now
-# can change to forms
-class LoginRequest(BaseModel):
-    username: str
+# I set this one up for you when you are building the pages for
+# signup to code verification to setting password, and password
+class SignUpStep1(BaseModel):
+    first_name: Annotated[
+    str,
+    Field(
+        min_length=3,
+        max_length=30,
+        pattern=r'^[a-zA-Z0-9_]+$',
+        strip_whitespace=True
+    )
+]
+    last_name: Annotated[
+    str,
+    Field(
+        min_length=3,
+        max_length=30,
+        pattern=r'^[a-zA-Z0-9_]+$',
+        strip_whitespace=True
+    )
+]
+    email: EmailStr
+    username: Annotated[
+        str,
+        Field(
+            min_length=3,
+            max_length=30,
+            pattern=r'^[a-zA-Z0-9_]+$',
+            strip_whitespace=True
+        )
+    ]
+    date_of_birth: date
+
+    @classmethod
+    def as_form(
+        cls,
+        first_name: str = Form(...),
+        last_name: str = Form(...),
+        email: EmailStr = Form(...),
+        date_of_birth: date = Form(...),
+    ):
+        return cls(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        date_of_birth=date_of_birth,
+    )
+
+
+class VerifyEmailCode(BaseModel):
+    email: EmailStr
+    code: str
+
+
+class SetPassword(BaseModel):
+    email: EmailStr
     password: str
 
-# for signup, we will need a of info
-class UserCreate(BaseModel):
+
+class SetUsername(BaseModel):
+    email: EmailStr
+    username: str
+
+# for signup, we will need a lof info
+class UserCreateForm(BaseModel):
     first_name: Annotated[
     str,
     Field(
@@ -42,6 +100,32 @@ class UserCreate(BaseModel):
     phone_number: PhoneNumber
     date_of_birth: date
     password: str
+
+    @classmethod
+    def as_form(
+        cls,
+        first_name: str = Form(...),
+        last_name: str = Form(...),
+        email: EmailStr = Form(...),
+        username: str = Form(...),
+        phone_number: PhoneNumber = Form(...),
+        date_of_birth: date = Form(...),
+        password: str = Form(...),
+    ):
+        return cls(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        username=username,
+        phone_number=phone_number,
+        date_of_birth=date_of_birth,
+        password=password,
+    )
+
+class VerifyEmailRequest(BaseModel):
+    email: str
+    code: str
+
 
 class UserResponse(BaseModel):
     email: EmailStr
@@ -131,3 +215,11 @@ class MessageResponse(MessageBase):
 
     # first_name: constr(strip_whitespace=True, min_length=1, max_length=100)
     # last_name: constr(strip_whitespace=True, min_length=1, max_length=100)
+
+
+# to be cleaned later
+# let's receive login request as JSON for now
+# can change to forms
+#class LoginRequest(BaseModel):
+#    username: str
+#    password: str

@@ -25,6 +25,17 @@ class User(Base):
     posts = relationship("Post", back_populates="owner")
 
 
+class EmailVerification(Base):
+    __tablename__ = "email_verifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    code = Column(String(255), index=True)
+    expires_at = Column(DateTime)
+    is_used = Column(Boolean, default=False)
+
+    user = relationship("User", back_populates="verifications")
+
 
 class Media(Base):
     __tablename__ = "media"
