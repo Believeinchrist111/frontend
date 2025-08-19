@@ -1,3 +1,7 @@
+body {
+  max-width: 100vw;
+}
+
 div#signin-card {
   display: flex;
   flex-direction: column;
@@ -85,4 +89,34 @@ p.dont-para {
 
 p.dont-para a {
   color: #1da1f2;
+}
+
+
+@media screen and (min-width: 40.6em){
+
+ form{
+  display: flex;
+  place-content: center;
+  place-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #2f3336;
+ }
+ 
+ div#signin-card {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  border-radius: 20px;
+  background-color: #000000;
+  padding: 0 80px;
+}
+
+
+button.previous-page-button {
+  position: absolute;
+  left: 25px;
+  top: 20px;
+}
+
 }

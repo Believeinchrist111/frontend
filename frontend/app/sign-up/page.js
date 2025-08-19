@@ -83,10 +83,13 @@ export default function SignUp() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
+        <div id='date-of-birth-label'><b>Date of birth</b><br /><span>This will not be shown publicly. Confirm your own age, even if this account is for a church.</span></div>
+
         <input
           id='dateofbirth-input'
           type='date'
           placeholder='Date of birth'
+          name="date-of-birth"
           value={dateOfbirth}
           onChange={(e) => setDateOfBirth(e.target.value)}
         />
@@ -96,6 +99,6 @@ export default function SignUp() {
         <button className='next-button'>Next</button>
 
       </div>
-    </form>
+    </form >
   );
 }
