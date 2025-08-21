@@ -21,8 +21,22 @@ class User(Base):
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
     is_verified = Column(Boolean, default=False)
+    picture = Column(String(255), nullable=True)
 
     posts = relationship("Post", back_populates="owner")
+    verifications = relationship("EmailVerification", back_populates="user")
+
+class Google_user(Base):
+    __tablename__ = "google_users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    google_sub = Column(String(255), unique=True, nullable=True)
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
+    email = Column(String(255), unique=True, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+    picture = Column(String(255), nullable=True)
+    is_verified = Column(Boolean, default=False)
 
 
 class EmailVerification(Base):

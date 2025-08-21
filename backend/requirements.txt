@@ -14,3 +14,4 @@ alembic
 fastapi_mail
 aiosmtplib
 email-validator
+httpx

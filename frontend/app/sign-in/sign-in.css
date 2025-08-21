@@ -91,7 +91,6 @@ p.dont-para a {
   color: #1da1f2;
 }
 
-
 @media screen and (min-width: 40.6em){
 
  form{
@@ -102,7 +101,7 @@ p.dont-para a {
   width: 100vw;
   background-color: #2f3336;
  }
- 
+
  div#signin-card {
   position: relative;
   width: 600px;

@@ -45,7 +45,6 @@ export default function SignIn() {
     }
   }
 
-
   return (
 
     <form onSubmit={handleSubmit}>
@@ -55,8 +54,32 @@ export default function SignIn() {
         </button>
 
         <h1>Sign in to Believe</h1>
-        <input type="text" placeholder="Sign in with Google" />
-        <input type="text" placeholder="Sign in with Apple" />
+        <button
+          type="button"
+          className="submit"
+          onClick={() => window.location.href = "http://localhost:8000/login/google"}
+        >
+          <img
+            src={'/Google.png'}
+            alt="Google logo"
+            style={{ width: "18px", marginRight: "8px" }}
+          />
+          Sign in with Google
+        </button>
+
+        <button
+          type="button"
+          className="submit"
+          onClick={() => window.location.href = "/login"}
+        >
+          <img
+            src={'/Apple_logo.png'}
+            alt="Apple logo"
+            style={{ width: "18px", marginRight: "8px" }}
+          />
+          Sign in with Apple
+        </button>
+
         <div className="divider"><div /> OR <div /></div>
 
         <input
