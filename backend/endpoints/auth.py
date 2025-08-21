@@ -41,7 +41,7 @@ def signup_step1(data: schemas.SignUpStep1, db: Session = Depends(get_db)):
         first_name=data.first_name,
         last_name=data.last_name,
         email=data.email,
-        date_of_birth=data.date_of_birth
+        date_of_birth=data.date_of_birth,
         is_verified=false
     )
     db.add(user)
@@ -53,23 +53,37 @@ def signup_step1(data: schemas.SignUpStep1, db: Session = Depends(get_db)):
     if code is None:
         return {"message": "verification code creation failed"}
 
-    send_verification_code(new_user.email, code) # sends code, must check for errors
+    background_tasks.add_task(oauth2.send_verification_code, new_user.email, code) # will check for errors
+
 
 
 # Step 2: Verify Email
 @router.post("/verify-email")
-def verify_email(data: schemas.VerifyEmailCode, db: Session = Depends(get_db)):
-    if verification_codes.get(data.email) != data.code:
-        raise HTTPException(status_code=400, detail="Invalid verification code")
+def verify_email(request: schemas.VerifyEmailCode, db: Session = Depends(db_dependency)):
 
-    user = db.query(models.User).filter(models.User.email == data.email).first()
+    # Look up the user
+    user = db.query(models.User).filter(models.User.email == email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    # lookup verification code
+    verification = (
+        db.query(schemas.EmailVerification)
+        .filter_by(user_id=user.id, code=request.code, is_used=False)
+        .first()
+    )
+
+    if not verification:
+        raise HTTPException(status_code=400, detail="Invalid verification code")
+
+    if verification.expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Verification code expired")
+
     user.is_verified = True
+    verification.is_used = True
     db.commit()
 
-    return {"message": "Email verified successfully."}
+    return {"message": "Email successfully verified"} # should we ?
 
 
 # Step 3: Set Password
@@ -100,53 +114,6 @@ def set_username(data: schemas.SetUsername, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Username set successfully. Account ready to use."}
-
-
-
-# Endpoint for signing up or creating an account
-@router.post('/sign-up', status_code=status.HTTP_201_CREATED)
-async def sign_up(db: db_dependency, user: schemas.UserCreateForm = Depends(schemas.UserCreateForm.as_form)):
-    hashed_password = utils.hash_password(user.password)
-    user.password = hashed_password
-    new_user = models.User(**user.model_dump())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    code = oauth2.create_verification_entry(new_user.email, db, new_user.user_id)
-
-    if code is None:
-        return {"message": "verification code creation failed"}
-
-    background_tasks.add_task(oauth2.send_verification_code, new_user.email, code) # will check for errors
-
-
-@router.get("/verify-email")
-def verify_email(request: schemas.VerifyEmailRequest, db: Session = Depends(db_dependency)):
-
-    # Look up the user
-    user = db.query(models.User).filter(models.User.email == email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # lookup verification code
-    verification = (
-        db.query(schemas.EmailVerification)
-        .filter_by(user_id=user.id, code=request.code, is_used=False)
-        .first()
-    )
-
-    if not verification:
-        raise HTTPException(status_code=400, detail="Invalid verification code")
-
-    if verification.expires_at < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="Verification code expired")
-
-    user.is_verified = True
-    verification.is_used = True
-    db.commit()
-
-    return {"message": "Email successfully verified"} # should we ?
 
 
 
@@ -212,8 +179,8 @@ async def verify_token(token: str = Depends(oauth2_bearer)):
 
 
 
-@router.get("/login", response_model = schemas.UserCreateForm)
-async def read_user(current_user: schemas.UserCreateForm = Depends(oauth2.get_current_user)):
+@router.get("/login", response_model = schemas.UserResponse)
+async def read_user(current_user: schemas.UserResponse = Depends(oauth2.get_current_user)):
     return current_user
 
 

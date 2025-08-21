@@ -67,65 +67,6 @@ class SetUsername(BaseModel):
     email: EmailStr
     username: str
 
-# for signup, we will need a lof info
-class UserCreateForm(BaseModel):
-    first_name: Annotated[
-    str,
-    Field(
-        min_length=3,
-        max_length=30,
-        pattern=r'^[a-zA-Z0-9_]+$',
-        strip_whitespace=True
-    )
-]
-    last_name: Annotated[
-    str,
-    Field(
-        min_length=3,
-        max_length=30,
-        pattern=r'^[a-zA-Z0-9_]+$',
-        strip_whitespace=True
-    )
-]
-    email: EmailStr
-    username: Annotated[
-        str,
-        Field(
-            min_length=3,
-            max_length=30,
-            pattern=r'^[a-zA-Z0-9_]+$',
-            strip_whitespace=True
-        )
-    ]
-    phone_number: PhoneNumber
-    date_of_birth: date
-    password: str
-
-    @classmethod
-    def as_form(
-        cls,
-        first_name: str = Form(...),
-        last_name: str = Form(...),
-        email: EmailStr = Form(...),
-        username: str = Form(...),
-        phone_number: PhoneNumber = Form(...),
-        date_of_birth: date = Form(...),
-        password: str = Form(...),
-    ):
-        return cls(
-        first_name=first_name,
-        last_name=last_name,
-        email=email,
-        username=username,
-        phone_number=phone_number,
-        date_of_birth=date_of_birth,
-        password=password,
-    )
-
-class VerifyEmailRequest(BaseModel):
-    email: str
-    code: str
-
 
 class UserResponse(BaseModel):
     email: EmailStr
@@ -223,3 +164,65 @@ class MessageResponse(MessageBase):
 #class LoginRequest(BaseModel):
 #    username: str
 #    password: str
+
+
+
+
+# for signup, we will need a lof info
+#class UserCreateForm(BaseModel):
+#    first_name: Annotated[
+#    str,
+#    Field(
+#        min_length=3,
+#        max_length=30,
+#        pattern=r'^[a-zA-Z0-9_]+$',
+#        strip_whitespace=True
+#    )
+#]
+#    last_name: Annotated[
+#    str,
+#    Field(
+#        min_length=3,
+#        max_length=30,
+#        pattern=r'^[a-zA-Z0-9_]+$',
+#        strip_whitespace=True
+#    )
+#]
+#    email: EmailStr
+#    username: Annotated[
+#        str,
+#        Field(
+#            min_length=3,
+#            max_length=30,
+#            pattern=r'^[a-zA-Z0-9_]+$',
+#            strip_whitespace=True
+#        )
+#    ]
+#    phone_number: PhoneNumber
+#    date_of_birth: date
+#    password: str
+#
+#    @classmethod
+#   def as_form(
+#        cls,
+#        first_name: str = Form(...),
+#        last_name: str = Form(...),
+#        email: EmailStr = Form(...),
+#        username: str = Form(...),
+#        phone_number: PhoneNumber = Form(...),
+#        date_of_birth: date = Form(...),
+#        password: str = Form(...),
+#    ):
+#        return cls(
+#        first_name=first_name,
+#        last_name=last_name,
+#        email=email,
+#        username=username,
+#        phone_number=phone_number,
+#        date_of_birth=date_of_birth,
+#        password=password,
+#    )
+
+#class VerifyEmailRequest(BaseModel):
+#    email: str
+#    code: str
