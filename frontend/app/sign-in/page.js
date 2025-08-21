@@ -55,8 +55,8 @@ export default function SignIn() {
         </button>
 
         <h1>Sign in to Believe</h1>
-        <input type="text" placeholder="Sign up with Google" />
-        <input type="text" placeholder="Sign up with Apple" />
+        <input type="text" placeholder="Sign in with Google" />
+        <input type="text" placeholder="Sign in with Apple" />
         <div className="divider"><div /> OR <div /></div>
 
         <input
