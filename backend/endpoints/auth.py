@@ -228,18 +228,19 @@ async def google_callback(
             user.google_sub = userinfo["sub"]
             db.commit()
         else:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Please sign up first")
             # Create new google user
-            user = models.Google_user(
-                google_sub=userinfo["sub"],
-                email=userinfo["email"],
-                first_name=userinfo.get("given_name"),
-                last_name=userinfo.get("family_name"),
-                picture=userinfo.get("picture"),
-                is_verified = userinfo.get("email_verified"),
-            )
-            db.add(user)
-            db.commit()
-            db.refresh(user)
+            #user = models.Google_user(
+            #    google_sub=userinfo["sub"],
+            #    email=userinfo["email"],
+            #    first_name=userinfo.get("given_name"),
+            #    last_name=userinfo.get("family_name"),
+            #    picture=userinfo.get("picture"),
+            #    is_verified = userinfo.get("email_verified"),
+            #)
+            #db.add(user)
+            #db.commit()
+            #db.refresh(user)
 
     access_token = oauth2.create_access_token(data={"user_id": user.id})
 
