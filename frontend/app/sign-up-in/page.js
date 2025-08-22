@@ -1,3 +1,4 @@
+"use client";
 import Link from 'next/link'
 
 import "./sign.css"
@@ -11,8 +12,32 @@ export default function SignUpOrIn() {
         <div id="sign-card">
           <h1>Happening now</h1>
           <h2>Join today.</h2>
-          <input type="text" placeholder="Sign up with Google" />
-          <input type="text" placeholder="Sign up with Apple" />
+          <button
+            type="button"
+            className="submit"
+            onClick={() => {}}
+          >
+            <img
+              src={'/Google.png'}
+              alt="Google logo"
+              style={{ width: "18px", marginRight: "8px" }}
+            />
+            Sign up with Google
+          </button>
+
+          <button
+            type="button"
+            className="submit"
+            onClick={() => {}}
+            >
+              <img
+                src={'/Apple_logo.png'}
+                alt="Apple logo"
+                style={{ width: "18px", marginRight: "8px" }}
+              />
+            Sign up with Apple
+          </button>
+
           <div className="divider"><div /> OR <div /></div>
           <Link
             href='../sign-up'
