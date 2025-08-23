@@ -212,8 +212,8 @@ export default function SignUp() {
 
         {step === 3 && (
           <div>
-            <h2>You'll need a password.</h2>
-            <p className="subtitle">Make sure it's 8 characters or more.</p>
+            <h2>You&apos;ll need a password.</h2>
+            <p className="subtitle">Make sure it&apos;s 8 characters or more.</p>
 
             <input
               type="password"
