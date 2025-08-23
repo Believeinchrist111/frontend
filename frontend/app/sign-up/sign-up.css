@@ -20,16 +20,24 @@ button.previous-page-button {
   background-color: #000000;
   fill: white;
   border: none;
+  cursor: pointer;
 }
 
-h1 {
+#signup-card h1 {
   font-size: 25px;
   width: 100%;
   max-width: 600px;
   margin-bottom: 20px;
- }
- 
- div#date-of-birth-label {
+}
+
+p.subtitle {
+  margin-top: 0px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #6e767d;
+}
+
+div#date-of-birth-label {
   font-size: 14px;
   margin-top: 20px;
   width: 100%;
@@ -57,7 +65,13 @@ div#date-of-birth-label span {
   cursor: pointer;
 }
 
-button.next-button {
+p {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #6e767d;
+}
+
+button.next-button, button.signup-button {
   display: flex;
   place-content: center;
   place-items: center;
@@ -72,32 +86,28 @@ button.next-button {
   cursor: pointer;
 }
 
+@media screen and (min-width: 40.6em) {
+  form {
+    display: flex;
+    place-content: center;
+    place-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #2f3336;
+  }
 
-@media screen and (min-width: 40.6em){
+  div#signup-card {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    border-radius: 20px;
+    background-color: #000000;
+    padding: 0 80px;
+  }
 
- form{
-  display: flex;
-  place-content: center;
-  place-items: center;
-  height: 100vh;
-  width: 100vw;
-  background-color: #2f3336;
- }
- 
- div#signup-card {
-  position: relative;
-  width: 600px;
-  height: 600px;
-  border-radius: 20px;
-  background-color: #000000;
-  padding: 0 80px;
-}
-
-
-button.previous-page-button {
-  position: absolute;
-  left: 25px;
-  top: 20px;
-}
-
+  button.previous-page-button {
+    position: absolute;
+    left: 25px;
+    top: 20px;
+  }
 }

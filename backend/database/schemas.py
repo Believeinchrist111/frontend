@@ -26,15 +26,16 @@ class SignUpStep1(BaseModel):
     )
 ]
     email: EmailStr
-    username: Annotated[
-        str,
-        Field(
-            min_length=3,
-            max_length=30,
-            pattern=r'^[a-zA-Z0-9_]+$',
-            strip_whitespace=True
-        )
-    ]
+    # username: Annotated[
+    #     str,
+    #     Field(
+    #         min_length=3,
+    #         max_length=30,
+    #         pattern=r'^[a-zA-Z0-9_]+$',
+    #         strip_whitespace=True
+    #     )
+    # ]
+    # phone_number: PhoneNumber
     date_of_birth: date
 
     @classmethod
@@ -62,17 +63,27 @@ class SetPassword(BaseModel):
     email: EmailStr
     password: str
 
-
-class SetUsername(BaseModel):
+class SendCodeRequest(BaseModel):
+    firstname: str
+    lastname: str
     email: EmailStr
-    username: str
+    # dateOfbirth: str
 
 
+class VerifyCodeRequest(BaseModel):
+    email: EmailStr
+    code: str
+    
+    
 class UserResponse(BaseModel):
     email: EmailStr
     id: int
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+    
+    
+    
+# Post
 
 class MediaItem(BaseModel):
     file_url: str

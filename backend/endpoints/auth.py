@@ -42,84 +42,71 @@ def signup_step1(data: schemas.SignUpStep1, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    user = models.User(
-        first_name=data.first_name,
-        last_name=data.last_name,
-        email=data.email,
-        date_of_birth=data.date_of_birth,
-        is_verified=false
-    )
-    db.add(user)
+
+# Endpoint for signing up or creating an account
+# Email verification endpoints
+@router.post("/send-code")
+async def send_token(req: schemas.SendCodeRequest, db: db_dependency):
+    try:
+        Code = oauth2.create_verification_token(req.email)
+
+        # Create a new record
+        record = models.EmailVerification(
+            firstname=req.firstname,
+            lastname=req.lastname,
+            email=req.email,
+            code=Code,
+            verified=False
+        )
+
+        db.add(record)
+        db.commit()
+        db.refresh(record)
+
+        # Send verification email
+        await oauth2.send_verification_email(req.email, Code)
+
+        return {"msg": "Verification token sent to email"}
+    except Exception as e:
+        print("ERROR in /send-code:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/verify-code")
+async def verify_user_token(req: schemas.VerifyCodeRequest, db: db_dependency):
+    # Find user by email
+    user = db.query(models.EmailVerification).filter(models.EmailVerification.email == req.email).first()
+
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    # This is the correct logic for a simple code
+    if user.code != req.code:
+        raise HTTPException(status_code=400, detail="Invalid code")
+
+
+    # Mark user as verified
+    user.verified = True
+    db.commit()
+    db.refresh(user)
+
+    # Send confirmation email
+    await oauth2.send_confirmation_email(req.email)
+
+    return {"msg": "Email successfully verified"}
+
+
+@router.post('/signup', status_code=status.HTTP_201_CREATED)
+async def sign_up(user: schemas.UserCreate, db: db_dependency):
+    hashed_password = utils.hash_password(user.password)
+    user.password = hashed_password
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
     db.commit()
     db.refresh(user) # at this stage user is unverified
 
-    code = oauth2.create_verification_entry(db, new_user.user_id) # generates verification code
 
-    if code is None:
-        return {"message": "verification code creation failed"}
-
-    background_tasks.add_task(oauth2.send_verification_code, new_user.email, code) # will check for errors
-
-
-
-# Step 2: Verify Email
-@router.post("/verify-email")
-def verify_email(request: schemas.VerifyEmailCode, db: Session = Depends(db_dependency)):
-
-    # Look up the user
-    user = db.query(models.User).filter(models.User.email == email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # lookup verification code
-    verification = (
-        db.query(schemas.EmailVerification)
-        .filter_by(user_id=user.id, code=request.code, is_used=False)
-        .first()
-    )
-
-    if not verification:
-        raise HTTPException(status_code=400, detail="Invalid verification code")
-
-    if verification.expires_at < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="Verification code expired")
-
-    user.is_verified = True
-    verification.is_used = True
-    db.commit()
-
-    return {"message": "Email successfully verified"} # should we ?
-
-
-# Step 3: Set Password
-@router.post("/set-password")
-def set_password(data: schemas.SetPassword, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == data.email).first()
-    if not user or not user.is_verified:
-        raise HTTPException(status_code=400, detail="User not verified")
-
-    user.password_hash = f"hashed({data.password})"  # Replace with real hash
-    db.commit()
-
-    return {"message": "Password set successfully."}
-
-
-# Step 4: Pick Username
-@router.post("/set-username")
-def set_username(data: schemas.SetUsername, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == data.email).first()
-    if not user or not user.password_hash:
-        raise HTTPException(status_code=400, detail="Password must be set first")
-
-    existing = db.query(models.User).filter(models.User.username == data.username).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Username already taken")
-
-    user.username = data.username
-    db.commit()
-
-    return {"message": "Username set successfully. Account ready to use."}
-
+# //////////////////////////////////////////////////////////////////////
 
 
 # Endpoint for signing in or logging into an account
@@ -164,6 +151,10 @@ async def login_for_access_token(
         max_age= 30 * 60,
     )
     return response
+
+
+
+# /////////////////////////////////////////////////////////////////////
 
 @router.get("/login/google")
 async def login_google():
@@ -273,6 +264,7 @@ async def verify_token(token: str = Depends(oauth2_bearer)):
 
     token_data = oauth2.verify_access_token(token, credentials_exception)
     return {"user_id": token_data.id}
+
 
 
 

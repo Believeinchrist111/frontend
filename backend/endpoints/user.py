@@ -13,17 +13,22 @@ user_dependency = Annotated[Session, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-# we can use this internally for our own debugs
-@router.get("/{id}", response_model=schemas.UserResponse)
-def get_user(id: int, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == id).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No User Found")
-
-    return user
 
 @router.get("/", status_code = status.HTTP_200_OK)
 async def user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    return {"User": user}
+    return {"User": user}  
+
+
+
+
+# we can use this internally for our own debugs
+
+# @router.get("/{id}", response_model=schemas.UserResponse)
+# def get_user(id: int, db: Session = Depends(get_db)):
+#     user = db.query(models.User).filter(models.User.id == id).first()
+#     if not user:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No User Found")
+
+#     return user
