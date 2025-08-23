@@ -46,6 +46,11 @@ class SignUpStep1(BaseModel):
         date_of_birth=date_of_birth,
     )
 
+class SendCodeRequest(BaseModel):
+    firstname: str
+    lastname: str
+    email: EmailStr
+    # dateOfbirth: str
 
 class VerifyCodeRequest(BaseModel):
     email: EmailStr
