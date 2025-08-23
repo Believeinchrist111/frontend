@@ -3,7 +3,8 @@ from typing import Annotated
 from database.database import engine
 
 from database import models
-from endpoints import auth
+from endpoints.auth import login
+from endpoints.auth import signup
 from endpoints import user
 from endpoints import post
 from endpoints import message
@@ -25,7 +26,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
+app.include_router(login.router)
+app.include_router(signup.router)
 app.include_router(user.router)
 app.include_router(post.router)
 app.include_router(message.router)

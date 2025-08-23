@@ -73,10 +73,10 @@ export default function SignUp() {
       });
 
       if (res.ok) {
-        alert("Token sent to email (check backend console for demo)");
+        alert("A code has been sent to your email (check backend console for demo)");
         setStep(2);
       } else {
-        alert("Failed to send token");
+        alert("Failed to send verification code");
       }
     } else if (step === 2) {
       // Call /verify-code
@@ -87,10 +87,10 @@ export default function SignUp() {
       });
 
       if (res.ok) {
-        alert("Token verified");
+        alert("Email has been successfully verified");
         setStep(3);
       } else {
-        alert("Invalid token");
+        alert("Invalid verification code");
       }
     }
   };

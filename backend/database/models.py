@@ -8,33 +8,40 @@ import enum
 
 Base = declarative_base()
 
+# the user_id is enough to refer to the user
+# who we are verifying with the code
+# remember, we can't reuse verification code for security reasons
+# and we need to set an expiry date for our code
 class EmailVerification(Base):
     __tablename__ = "email_verifications"
 
     id = Column(Integer, primary_key=True, index=True)
-    firstname = Column(String(100), nullable=False)
-    lastname = Column(String(100), nullable=False)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     code = Column(String(255), nullable=False)
-    verified = Column(Boolean, default=False)
+    expires_at = Column(DateTime)
+    is_used = Column(Boolean, default=False)
+    is_verified = Column(Boolean, default=False)
+
 
 class User(Base):
     __tablename__ = "users"
- 
+
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
-    # username = Column(String(30), unique=True, nullable=False)
-    # phone_number = Column(String(20), unique=True, nullable=False)
+    username = Column(String(30), unique=True, nullable=False)
+    phone_number = Column(String(20), unique=True, nullable=False)
     date_of_birth = Column(Date, nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
-    # is_verified = Column(Boolean, default=False)
+    #is_verified = Column(Boolean, default=False)
     picture = Column(String(255), nullable=True)
 
     posts = relationship("Post", back_populates="owner")
-    verifications = relationship("EmailVerification", back_populates="user")
+    #verifications = relationship("EmailVerification", back_populates="user")
 
 class Google_user(Base):
     __tablename__ = "google_users"
@@ -47,18 +54,6 @@ class Google_user(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
     picture = Column(String(255), nullable=True)
     is_verified = Column(Boolean, default=False)
-
-
-class EmailVerification(Base):
-    __tablename__ = "email_verifications"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    code = Column(String(255), index=True)
-    expires_at = Column(DateTime)
-    is_used = Column(Boolean, default=False)
-
-    user = relationship("User", back_populates="verifications")
 
 
 class Media(Base):

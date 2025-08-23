@@ -18,7 +18,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    return {"User": user}  
+    return {"User": user}
 
 
 
