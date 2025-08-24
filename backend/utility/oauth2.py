@@ -16,16 +16,16 @@ SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
-# conf = ConnectionConfig(
-#     MAIL_USERNAME="you@example.com",
-#     MAIL_PASSWORD="yourpassword",
-#     MAIL_FROM="you@example.com",
-#     MAIL_PORT=587,
-#     MAIL_SERVER="random.random.com",
-#     MAIL_STARTTLS=True,
-#     MAIL_SSL_TLS=False,
-#     USE_CREDENTIALS=True
-# )
+conf = ConnectionConfig(
+    MAIL_USERNAME="you@example.com",
+    MAIL_PASSWORD="yourpassword",
+    MAIL_FROM="you@example.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="random.random.com",
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    USE_CREDENTIALS=True
+)
 
 
 
@@ -149,3 +149,5 @@ def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(
 #     )
 #     fm = FastMail(conf)
 #     await fm.send_message(message)
+
+gekki
