@@ -107,10 +107,10 @@ export default function SignUp() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        first_name: form.firstname,
-        last_name: form.lastname,
+        firstname: form.firstname,
+        lastname: form.lastname,
         email: form.email,
-        date_of_birth: form.dateOfbirth,
+        date_of_birth: form.dateOfbirth, 
         password: form.password,
       }),
     });
@@ -224,14 +224,14 @@ export default function SignUp() {
               required
             />
 
-            {/* <input
+            <input
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
               value={form.confirmPassword}
               onChange={handleChange}
               required
-            /> */}
+            />
 
             <p>By signing up, you agree to the Terms of Service and Privacy Policy, including Cookie Use. X may use your contact information, including your email address and phone number for purposes outlined in our Privacy Policy, such as keeping your account secure and personalising our services, including ads. Learn more. Others will be able to find you by email address or phone number, when provided, unless you choose otherwise here.</p>
 

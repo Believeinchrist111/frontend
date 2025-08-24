@@ -13,113 +13,113 @@ Base = declarative_base()
 # remember, we can't reuse verification code for security reasons
 # and we need to set an expiry date for our code
 class EmailVerification(Base):
-    __tablename__ = "email_verifications"
+    __tablename__ = "email_verifications"   
 
     id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
+    firstname = Column(String(100), nullable=False)
+    lastname = Column(String(100), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     code = Column(String(255), nullable=False)
-    expires_at = Column(DateTime)
-    is_used = Column(Boolean, default=False)
-    is_verified = Column(Boolean, default=False)
-
-
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    is_used = Column(Boolean, default=False)    
+    verified = Column(Boolean, default=False)             
+   
+    
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    username = Column(String(30), unique=True, nullable=False)
-    phone_number = Column(String(20), unique=True, nullable=False)
+    firstname = Column(String(100), nullable=False)
+    lastname = Column(String(100), nullable=False)
+    # username = Column(String(30), unique=True, nullable=False)
+    # phone_number = Column(String(20), unique=True, nullable=False)
     date_of_birth = Column(Date, nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
-    #is_verified = Column(Boolean, default=False)
-    picture = Column(String(255), nullable=True)
+    #is_verified = Column(Boolean, default=False)    
+    # picture = Column(String(255), nullable=True) 
 
-    posts = relationship("Post", back_populates="owner")
+    # posts = relationship("Post", back_populates="owner")
     #verifications = relationship("EmailVerification", back_populates="user")
 
-class Google_user(Base):
-    __tablename__ = "google_users"
+# class Google_user(Base):
+#     __tablename__ = "google_users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    google_sub = Column(String(255), unique=True, nullable=True)
-    first_name = Column(String(100), nullable=True)
-    last_name = Column(String(100), nullable=True)
-    email = Column(String(255), unique=True, nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
-    picture = Column(String(255), nullable=True)
-    is_verified = Column(Boolean, default=False)
-
-
-class Media(Base):
-    __tablename__ = "media"
-
-    id = Column(Integer, primary_key=True, index=True)
-    file_url = Column(String(255), nullable=False)
-
-    post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
-
-    post = relationship("Post", back_populates="media_items")
+#     id = Column(Integer, primary_key=True, index=True)
+#     google_sub = Column(String(255), unique=True, nullable=True)
+#     first_name = Column(String(100), nullable=True)
+#     last_name = Column(String(100), nullable=True)
+#     email = Column(String(255), unique=True, nullable=False)
+#     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+#     picture = Column(String(255), nullable=True)
+#     is_verified = Column(Boolean, default=False)
 
 
+# class Media(Base):
+#     __tablename__ = "media"
 
-class Post(Base):
-    __tablename__ = "posts"
+#     id = Column(Integer, primary_key=True, index=True)
+#     file_url = Column(String(255), nullable=False)
 
-    id = Column(Integer, primary_key=True, index=True)
+#     post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
 
-    content = Column(Text, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+#     post = relationship("Post", back_populates="media_items")
 
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    owner = relationship("User", back_populates="posts")
 
-    reply_to_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
-    replies = relationship(
-        "Post",
-        backref=backref("parent", remote_side=[id]),
-        foreign_keys=[reply_to_post_id]
-        )
 
-    is_repost = Column(Boolean, default=False)
+# class Post(Base):
+#     __tablename__ = "posts"
 
-    repost_of_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
-    repost = relationship(
-        "Post",
-        remote_side=[id],
-        foreign_keys=[repost_of_post_id],
-        post_update=True
-    )
+#     id = Column(Integer, primary_key=True, index=True)
 
-    media_items = relationship("Media", back_populates="post", cascade="all, delete")
+#     content = Column(Text, nullable=True)
+#     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-class MessageStatus(str, enum.Enum):
-    sent = "sent"
-    delivered = "delivered"
-    read = "read"
-    failed = "failed"
+#     owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+#     owner = relationship("User", back_populates="posts")
 
-class Message(Base):
-    __tablename__ = "messages"
+#     reply_to_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
+#     replies = relationship(
+#         "Post",
+#         backref=backref("parent", remote_side=[id]),
+#         foreign_keys=[reply_to_post_id]
+#         )
 
-    id = Column(Integer, primary_key=True, index=True)
-    content = Column(Text, nullable=True)  # Text message body
+#     is_repost = Column(Boolean, default=False)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    status = Column(Enum(MessageStatus), default=MessageStatus.sent, nullable=False)
+#     repost_of_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
+#     repost = relationship(
+#         "Post",
+#         remote_side=[id],
+#         foreign_keys=[repost_of_post_id],
+#         post_update=True
+#     )
 
-    sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    receiver_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+#     media_items = relationship("Media", back_populates="post", cascade="all, delete")
 
-    sender = relationship("User", foreign_keys=[sender_id], backref="sent_messages")
-    receiver = relationship("User", foreign_keys=[receiver_id], backref="received_messages")
+# class MessageStatus(str, enum.Enum):
+#     sent = "sent"
+#     delivered = "delivered"
+#     read = "read"
+#     failed = "failed"
 
-    # Optional: allow attaching media to a message
-    media_id = Column(Integer, ForeignKey("media.id", ondelete="SET NULL"), nullable=True)
-    media = relationship("Media", backref="messages")
+# class Message(Base):
+#     __tablename__ = "messages"
+
+#     id = Column(Integer, primary_key=True, index=True)
+#     content = Column(Text, nullable=True)  # Text message body
+
+#     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+#     status = Column(Enum(MessageStatus), default=MessageStatus.sent, nullable=False)
+
+#     sender_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+#     receiver_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+#     sender = relationship("User", foreign_keys=[sender_id], backref="sent_messages")
+#     receiver = relationship("User", foreign_keys=[receiver_id], backref="received_messages")
+
+#     # Optional: allow attaching media to a message
+#     media_id = Column(Integer, ForeignKey("media.id", ondelete="SET NULL"), nullable=True)
+#     media = relationship("Media", backref="messages")
 

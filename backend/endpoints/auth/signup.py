@@ -1,10 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
-from database.database import SessionLocal, get_db
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from database.database import get_db
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi import BackgroundTasks
 from datetime import datetime, timedelta, timezone
@@ -25,83 +23,82 @@ router = APIRouter(
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-#store the basic info about the user but mark as unverified
-@router.post("/sign-up")
-def signup_step1(data: schemas.SignUpStep1, db: Session = Depends(get_db)):
-    # check if email exists
-    existing = db.query(models.User).filter(models.User.email == data.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
 
-    # if a user signs up without verifying himself, store his/her details
-    # in the database but mark him not verified
-    # if we don't store it here, we are never getting it
-    user = models.User(
-        first_name=data.first_name,
-        last_name=data.last_name,
-        email=data.email,
-        date_of_birth=data.date_of_birth
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
 
+
+# Endpoint for signing up or creating an account
 
 # Email verification endpoints
 @router.post("/send-code")
-async def send_verification_code(req: schemas.SendCodeRequest, db: db_dependency):
+async def send_token(req: schemas.SendCodeRequest, db: db_dependency):
     try:
-        Code = oauth2.generate_verification_code()
+        code = oauth2.generate_verification_code()
 
         # Create a new record
-        # not verified by default in the database
         record = models.EmailVerification(
-            first_name=req.firstname,
-            last_name=req.lastname,
+            firstname=req.firstname,
+            lastname=req.lastname,
             email=req.email,
-            code=Code,
-            expires_at = datetime.utcnow() + timedelta(minutes=120)
+            code=code,
+            verified=False,
+            expires_at = datetime.now(timezone.utc) + timedelta(minutes=120)
         )
-
+        
         db.add(record)
         db.commit()
         db.refresh(record)
+        
+        # Send verification email
+        await oauth2.send_verification_code(req.email, code)
 
-        # Send verification code
-        await oauth2.send_verification_code(req.email, Code)
-
-        return {"msg": "Verification code sent to email"}
+        return {"msg": "Verification token sent to email"}
     except Exception as e:
         print("ERROR in /send-code:", e)
         raise HTTPException(status_code=500, detail=str(e))
-
+    
 
 @router.post("/verify-code")
-async def verify_verif_code(req: schemas.VerifyCodeRequest, db: db_dependency):
+async def verify_user_token(req: schemas.VerifyCodeRequest, db: db_dependency):
     # Find user by email
-    verif_user = db.query(models.EmailVerification).filter(models.EmailVerification.email == req.email).first()
-
-    if not verif_user:
-        raise HTTPException(status_code=400, detail="user not found")
-
-    # This is the correct logic for a simple code
-    if verif_user.code != req.code:
+    user = db.query(models.EmailVerification).filter(models.EmailVerification.email == req.email).first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user.code != req.code:
         raise HTTPException(status_code=400, detail="Invalid code")
-
-    # check if code is expired
-    if verif_user.expires_at < datetime.utcnow():
-        raise HTTPException(status_code=400, detail="Verification code expired")
+    
+    # expires_at = user.expires_at
+    # if expires_at.tzinfo is None:  # naive -> make it aware
+    #     expires_at = expires_at.replace(tzinfo=timezone.utc)
+    # if user.expires_at < datetime.now(timezone.utc):
+    #     raise HTTPException(status_code=400, detail="Verification code expired")
 
     # Mark user as verified
-    verif_user.is_verified = True
+    user.verified = True
     db.commit()
-    db.refresh(verif_user)
-
+    db.refresh(user)
+    
     # Send confirmation email
     await oauth2.send_confirmation_email(req.email)
 
     return {"msg": "Email successfully verified"}
 
+
+
+@router.post('/signup', status_code=status.HTTP_201_CREATED)
+async def sign_up(user: schemas.UserCreate, db: db_dependency):
+    print(user.firstname)
+    hashed_password = utils.hash_password(user.password)
+    user.password = hashed_password
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user 
+    
+# ////////////////////////////////////////////////////////////////////
 
 
 
