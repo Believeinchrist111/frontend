@@ -3,15 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
-from database.database import SessionLocal
+from database.database import SessionLocal, get_db
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi import BackgroundTasks
+from datetime import datetime, timedelta, timezone
 import httpx
 from fastapi import Request
 import os
 from urllib.parse import urlencode
-
 
 from database import models
 from database import schemas
@@ -23,90 +23,8 @@ router = APIRouter(
     tags=["auth"]
 )
 
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='sign-in')
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 db_dependency = Annotated[Session, Depends(get_db)]
-
-#store the basic info about the user but mark as unverified
-@router.post("/sign-up")
-def signup_step1(data: schemas.SignUpStep1, db: Session = Depends(get_db)):
-    # check if email exists
-    existing = db.query(models.User).filter(models.User.email == data.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
-
-
-# Endpoint for signing up or creating an account
-# Email verification endpoints
-@router.post("/send-code")
-async def send_token(req: schemas.SendCodeRequest, db: db_dependency):
-    try:
-        Code = oauth2.create_verification_token(req.email)
-
-        # Create a new record
-        record = models.EmailVerification(
-            firstname=req.firstname,
-            lastname=req.lastname,
-            email=req.email,
-            code=Code,
-            verified=False
-        )
-
-        db.add(record)
-        db.commit()
-        db.refresh(record)
-
-        # Send verification email
-        await oauth2.send_verification_email(req.email, Code)
-
-        return {"msg": "Verification token sent to email"}
-    except Exception as e:
-        print("ERROR in /send-code:", e)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/verify-code")
-async def verify_user_token(req: schemas.VerifyCodeRequest, db: db_dependency):
-    # Find user by email
-    user = db.query(models.EmailVerification).filter(models.EmailVerification.email == req.email).first()
-
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid token")
-
-    # This is the correct logic for a simple code
-    if user.code != req.code:
-        raise HTTPException(status_code=400, detail="Invalid code")
-
-
-    # Mark user as verified
-    user.verified = True
-    db.commit()
-    db.refresh(user)
-
-    # Send confirmation email
-    await oauth2.send_confirmation_email(req.email)
-
-    return {"msg": "Email successfully verified"}
-
-
-@router.post('/signup', status_code=status.HTTP_201_CREATED)
-async def sign_up(user: schemas.UserCreate, db: db_dependency):
-    hashed_password = utils.hash_password(user.password)
-    user.password = hashed_password
-    new_user = models.User(**user.model_dump())
-    db.add(new_user)
-    db.commit()
-    db.refresh(user) # at this stage user is unverified
-
-
-# //////////////////////////////////////////////////////////////////////
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='sign-in')
 
 
 # Endpoint for signing in or logging into an account
@@ -153,12 +71,28 @@ async def login_for_access_token(
     return response
 
 
+# end point for signin verification token
+@router.get("/verify-token")
+async def verify_token(token: str = Depends(oauth2_bearer)):
+    print("the token in the verify token endpoint")
+    print(token)
+    print("the token in the verify token endpoint")
 
-# /////////////////////////////////////////////////////////////////////
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or expired token",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
+    token_data = oauth2.verify_access_token(token, credentials_exception)
+    return {"user_id": token_data.id}
+
+
+
+# loging in with google
 @router.get("/login/google")
 async def login_google():
-    client_id = "some_id"
+    client_id = "some id"
     redirect_uri = "http://localhost:8000/auth/google/callback"
     scope = "openid email profile"
 
@@ -176,6 +110,13 @@ async def login_google():
     #print("Redirecting to:", google_auth_url)  # debug log
     return RedirectResponse(url=google_auth_url)
 
+
+# per research,
+# sign up with google will verify user from google first
+# after verifying you, if it checks that you already have an account
+# in the system, it logs you in directly
+# if you don't have account yet, it creates one for you and logs you in
+# no striking/strict difference between sign in and sign up with google
 
 @router.get("/auth/google/callback")
 async def google_callback(
@@ -196,6 +137,9 @@ async def google_callback(
     async with httpx.AsyncClient() as client:
         token_response = await client.post(token_url, data=data)
         tokens = token_response.json()
+
+    if "access_token" not in tokens:
+        raise HTTPException(status_code=400, detail=f"Google OAuth error: {tokens}")
 
     # Decode ID token to extract user info
     userinfo_url = "https://openidconnect.googleapis.com/v1/userinfo"
@@ -219,19 +163,19 @@ async def google_callback(
             user.google_sub = userinfo["sub"]
             db.commit()
         else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Please sign up first")
+            # automatically treat is as a sign up
             # Create new google user
-            #user = models.Google_user(
-            #    google_sub=userinfo["sub"],
-            #    email=userinfo["email"],
-            #    first_name=userinfo.get("given_name"),
-            #    last_name=userinfo.get("family_name"),
-            #    picture=userinfo.get("picture"),
-            #    is_verified = userinfo.get("email_verified"),
-            #)
-            #db.add(user)
-            #db.commit()
-            #db.refresh(user)
+            user = models.Google_user(
+                google_sub=userinfo["sub"],
+                email=userinfo["email"],
+                first_name=userinfo.get("given_name"),
+                last_name=userinfo.get("family_name"),
+                picture=userinfo.get("picture"),
+                is_verified = userinfo.get("email_verified"),
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
 
     access_token = oauth2.create_access_token(data={"user_id": user.id})
 
@@ -248,34 +192,4 @@ async def google_callback(
     )
 
     return response
-
-
-@router.get("/verify-token")
-async def verify_token(token: str = Depends(oauth2_bearer)):
-    print("the token in the verify token endpoint")
-    print(token)
-    print("the token in the verify token endpoint")
-
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid or expired token",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    token_data = oauth2.verify_access_token(token, credentials_exception)
-    return {"user_id": token_data.id}
-
-
-
-
-
-@router.get("/login", response_model = schemas.UserResponse)
-async def read_user(current_user: schemas.UserResponse = Depends(oauth2.get_current_user)):
-    return current_user
-
-
-# @router.get("/users/me/", response_model=schemas.UserCreate)
-# async def read_users_me(current_user: schemas.UserCreate = Depends(oauth2.get_current_user)):
-#     return current_user
-
 

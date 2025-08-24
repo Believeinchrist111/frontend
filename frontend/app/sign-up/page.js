@@ -73,10 +73,10 @@ export default function SignUp() {
       });
 
       if (res.ok) {
-        alert("Token sent to email (check backend console for demo)");
+        alert("A code has been sent to your email (check backend console for demo)");
         setStep(2);
       } else {
-        alert("Failed to send token");
+        alert("Failed to send verification code");
       }
     } else if (step === 2) {
       // Call /verify-code
@@ -87,10 +87,10 @@ export default function SignUp() {
       });
 
       if (res.ok) {
-        alert("Token verified");
+        alert("Email has been successfully verified");
         setStep(3);
       } else {
-        alert("Invalid token");
+        alert("Invalid verification code");
       }
     }
   };
@@ -212,8 +212,8 @@ export default function SignUp() {
 
         {step === 3 && (
           <div>
-            <h2>You'll need a password.</h2>
-            <p className="subtitle">Make sure it's 8 characters or more.</p>
+            <h2>You&apos;ll need a password.</h2>
+            <p className="subtitle">Make sure it&apos;s 8 characters or more.</p>
 
             <input
               type="password"

@@ -4,8 +4,10 @@ from typing import Annotated, Optional, List
 from pydantic_extra_types.phone_numbers import PhoneNumber
 from fastapi import Form
 
-# I set this one up for you when you are building the pages for
-# signup to code verification to setting password, and password
+# This is a three step process for signup
+# base sign up page
+# verification code sending
+# username and password setting
 class SignUpStep1(BaseModel):
     first_name: Annotated[
     str,
@@ -26,16 +28,7 @@ class SignUpStep1(BaseModel):
     )
 ]
     email: EmailStr
-    # username: Annotated[
-    #     str,
-    #     Field(
-    #         min_length=3,
-    #         max_length=30,
-    #         pattern=r'^[a-zA-Z0-9_]+$',
-    #         strip_whitespace=True
-    #     )
-    # ]
-    # phone_number: PhoneNumber
+
     date_of_birth: date
 
     @classmethod
@@ -53,38 +46,28 @@ class SignUpStep1(BaseModel):
         date_of_birth=date_of_birth,
     )
 
-
-class VerifyEmailCode(BaseModel):
-    email: EmailStr
-    code: str
-
-
-class SetPassword(BaseModel):
-    email: EmailStr
-    password: str
-
 class SendCodeRequest(BaseModel):
     firstname: str
     lastname: str
     email: EmailStr
     # dateOfbirth: str
 
-
 class VerifyCodeRequest(BaseModel):
     email: EmailStr
     code: str
-    
-    
+
+class SetPassword(BaseModel):
+    email: EmailStr
+    password: str
+
 class UserResponse(BaseModel):
     email: EmailStr
     id: int
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    
-    
-    
-# Post
 
+
+# Post schemas
 class MediaItem(BaseModel):
     file_url: str
     type: str

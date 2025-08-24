@@ -15,7 +15,7 @@ export default function SignUpOrIn() {
           <button
             type="button"
             className="submit"
-            onClick={() => {}}
+            onClick={() =>  window.location.href = "http://localhost:8000/signup/google"}
           >
             <img
               src={'/Google.png'}
