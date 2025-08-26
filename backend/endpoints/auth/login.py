@@ -36,7 +36,7 @@ async def login_for_access_token(
     user = db.query(models.User).filter(
         or_(
             models.User.email == user_cred.username,
-            models.User.username == user_cred.username
+            models.User.firstname == user_cred.username
         )
     ).first()
 

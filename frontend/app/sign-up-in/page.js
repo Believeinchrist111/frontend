@@ -14,7 +14,7 @@ export default function SignUpOrIn() {
           <h2>Join today.</h2>
           <button
             type="button"
-            className="submit"
+            className="signup-google"
             onClick={() =>  window.location.href = "http://localhost:8000/signup/google"}
           >
             <img
@@ -27,7 +27,7 @@ export default function SignUpOrIn() {
 
           <button
             type="button"
-            className="submit"
+            className="signup-apple"
             onClick={() => {}}
             >
               <img

@@ -7,10 +7,10 @@ export async function middleware(request) {
  console.log(token)
  console.log('the token in the middleware')
 
- // if visiting /signin or /signup, no need to check
- if (request.nextUrl.pathname.startsWith("/signin") || request.nextUrl.pathname.startsWith("/signup")) {
-  return NextResponse.next();
- }
+ // // allow redirect to "/" immediately after signup succeeds
+ // if (request.headers.get("referer")?.endsWith("/signup")) {
+ //  return NextResponse.next();
+ // }
 
  if (!token) {
   return NextResponse.redirect(new URL("/sign-up-in", request.url));

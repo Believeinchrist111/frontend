@@ -96,7 +96,31 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
     db.commit()
     db.refresh(new_user)
 
-    return new_user 
+    # create JWT
+    access_token = oauth2.create_access_token(data={"user_id": new_user.id})
+
+    response = JSONResponse(content={
+        "message": "Signup successful",
+        "user": {
+            "id": new_user.id,
+            "firstname": new_user.firstname,
+            "lastname": new_user.lastname,
+            "email": new_user.email,
+        },
+        "access_token": access_token,
+        "token_type": "bearer",
+    })
+
+    # set cookie so middleware sees it
+    response.set_cookie(
+        key="token",
+        value=access_token,
+        httponly=True,
+        secure=False,   # set True in production
+        samesite="lax",
+        max_age=30 * 60,
+    )
+    return response
     
 # ////////////////////////////////////////////////////////////////////
 

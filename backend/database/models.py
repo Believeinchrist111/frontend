@@ -23,7 +23,7 @@ class EmailVerification(Base):
     expires_at = Column(DateTime(timezone=True), nullable=False)
     is_used = Column(Boolean, default=False)    
     verified = Column(Boolean, default=False)             
-   
+        
     
 class User(Base):
     __tablename__ = "users"

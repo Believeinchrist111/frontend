@@ -7,7 +7,7 @@ import Link from 'next/link';
 import "./sign-in.css";
 
 export default function SignIn() {
-  const [username, setUsername] = useState("");
+  const [userIdentifier, setUserIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,20 +16,21 @@ export default function SignIn() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!username || !password) {
+    if (!userIdentifier || !password) {
       setError("Username and password are required");
       return;
     }
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("username", username);
+    const formData = new URLSearchParams();
+    formData.append("username", userIdentifier);
     formData.append("password", password);
 
     try {
       const res = await fetch("/api/sign-in", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
         credentials: "include", // important: store cookie
       });
       if (res.ok) {
@@ -54,9 +55,9 @@ export default function SignIn() {
         </button>
 
         <h1>Sign in to Believe</h1>
-        <button
+        <button  
           type="button"
-          className="submit"
+          className="signin-google"
           onClick={() => window.location.href = "http://localhost:8000/signup/google"}
         >
           <img
@@ -69,7 +70,7 @@ export default function SignIn() {
 
         <button
           type="button"
-          className="submit"
+          className="signin-apple"
           onClick={() => window.location.href = "/login"}
         >
           <img
@@ -86,8 +87,8 @@ export default function SignIn() {
           className='login-input'
           type='text'
           placeholder='Phone, email address, or username'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={userIdentifier}
+          onChange={(e) => setUserIdentifier(e.target.value)}
         />
 
         <input

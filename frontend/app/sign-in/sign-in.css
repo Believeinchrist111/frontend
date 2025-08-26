@@ -29,6 +29,19 @@ h1 {
   margin-bottom: 20px;
 }
 
+button.signin-google, button.signin-apple{
+  display: flex;
+  place-content: center;
+  place-items: center;
+  font-size: 15px;
+  height: 42px;
+  width: 250px;
+  border-radius: 30px;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
 input {
   margin: 5px 0;
   text-align: center;
