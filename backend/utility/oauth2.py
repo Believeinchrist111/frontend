@@ -30,7 +30,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 
 
-
 # ///////////////////////////////////////////////////////////////////////
 
 # Email verification util functions

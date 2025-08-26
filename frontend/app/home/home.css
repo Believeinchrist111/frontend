@@ -1,3 +1,8 @@
+div#home-body{
+  display: flex;
+  max-width: 700px;
+}
+
 /* Stylings for the HomeNav Component */
 
 nav#home-nav {
@@ -418,7 +423,7 @@ button#compose-button svg {
   nav#home-nav {
     width: 640px;
     position: fixed;
-    left: calc((100vw - 580px) / 2);
+    left: calc((100vw - 595px) / 2);
     margin-left: 0px;
   }
 
@@ -426,7 +431,7 @@ button#compose-button svg {
 
   nav#home-footer-nav {
     position: fixed;
-    left: calc((100vw - 700px) / 2);
+    left: calc((100vw - 715px) / 2);
   }
 
   div#nav-wrapper button h1 {
@@ -514,4 +519,3 @@ button#compose-button svg {
     display: block;
   }
 }
-
