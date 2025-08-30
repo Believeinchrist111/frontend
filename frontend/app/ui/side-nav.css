@@ -1,83 +1,140 @@
-/* Stylings for the SideNav Component */
 nav#side-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(29, 161, 242, .15);
-  height: 100vh;
-  width: 100vw;
-  z-index: 2;
- }
- 
- div#side-nav-wrapper {
-  height: 100vh;
-  width: 288px;
-  padding: 20px 15px;
-  background-color: #000000;
-  border-right: 0.5px solid #6e767d;
-  z-index: 3;
+  display: none;
 }
 
-a#user-name{
-  display: block;
-  color: white;
+/* /////////////////////////////////////////////////////////////////////
+ */
+
+@media screen and (min-width: 31.25em) {
+  /* Stylings for the SideNav Component */
+  nav#side-nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    border-right: 1px solid #2f3336;
+    border-top: none;
+    height: 100vh;
+    width: 60px;
+  }
+
+  div#side-nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    height: 80%;
+    width: inherit;
+    padding: 50px 0 0 0;
+  }
+
+  div#side-nav-wrapper button {
+    background-color: transparent;
+    border: none;
+    height: 25px;
+    width: 25px;
+  }
+
+  nav#side-nav button svg {
+    fill: #e7e9ea;
+  }
+
+  button#more-options-button {
+    display: block;
+  }
+
+  button#profile-button {
+    display: block;
+  }
+
+  button#compose-button {
+    display: none;
+  }
+
+  button#communities-button {
+    display: none;
+  }
+
+  div#side-nav-wrapper button span {
+    display: none;
+  }
+
+  .side-nav-profile-image {
+    display: block;
+    border-radius: 20px;
+  }
+
+  div#side-nav-handle-container {
+    display: none;
+  }
+
+  .three-dots-icon {
+    display: none;
+  }
 }
 
-div#following-followers-container {
-  margin-top: 10px;
-}
+/* ///////////////////////////////////////////////////////////////////// */
 
-div#following-followers-container button {
-  background-color: transparent;
-  color: #6e767d;
-  width: 100px;
-  border: none;
-  text-align: left;
-}
+@media screen and (min-width: 75em) {
+  /* Stylings for the SideNav Component */
 
-span#following-number, span#followers-number{ 
- color: white;
- font-weight: 600;
-}
+  nav#side-nav {
+    flex-direction: column;
+    justify-content: space-between;
+    left: calc(50% - 591px);
+    width: 300px;
+  }
 
-div#menu-lists {
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-}
+  div#side-nav-wrapper {
+    padding-top: 70px;
+    align-items: flex-start;
+  }
 
-div#menu-lists button {
-  display: flex;
-  background-color: transparent;
-  place-items: center;
-  color: #e7e9ea;
-  font-size: 1.3em;
-  font-weight: 600;
-  text-align: left;
-  margin: 15px 0;
-  border: none;
-}
+  div#side-nav-wrapper button {
+    display: flex;
+    height: 25px;
+    align-items: center;
+    width: max-content;
+  }
 
-div#menu-lists button svg {
-  margin-right: 20px;
-  height: 30px;
-  width: 30px;
-  fill: #e7e9ea;
-}
+  div#side-nav-wrapper button svg {
+    width: 25px;
+    margin-right: 15px;
+  }
 
-button#compose-button {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  height: 50px;
-  width: 50px;
-  background-color: #1da1f2;
-  border: none;
-  border-radius: 30px;
-}
+  div#side-nav-wrapper button span {
+    display: block;
+    font-size: 24px;
+    color: #eff3f4;
+  }
 
-button#compose-button svg {
-  height: 25px;
-  width: 25px;
-  fill: rgb(255, 255, 255);
+  div#side-profile-container {
+    display: flex;
+  }
+
+  .side-nav-profile-image {
+    position: relative;
+    bottom: 0px;
+    margin-right: 10px;
+  }
+
+  div#side-profile-container .three-dots-icon {
+    margin-left: 40px;
+    fill: #eff3f4;
+    width: 20px;
+  }
+
+  div#side-nav-handle-container {
+    display: block;
+  }
+
+  div#side-nav-handle-container div#user-account-name {
+    display: block;
+    color: #6e767d;
+  }
+
+  .three-dots-icon {
+    display: block;
+  }
 }

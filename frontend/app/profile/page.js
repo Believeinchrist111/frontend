@@ -1,9 +1,15 @@
-import Image from "next/image"
-import Link from "next/link"
+'use client'
 
+import Image from "next/image"
+// import Link from "next/link"
+import { useState } from "react";
+
+import FooterNav from "../ui/footer-nav.js"
 import "./profile.css"
 
 export default function Profile() {
+ const tabs = ["Posts", "Replies", "Highlights", "Articles", "Media", "Likes"];
+ const [activeTab, setActiveTab] = useState("Posts");
 
  return (
   <>
@@ -50,13 +56,18 @@ export default function Profile() {
     </div>
 
     <div id="profile-tab-nav">
-     <span>Posts</span>
-     <span>Replies</span>
-     <span>Highlights</span>
-     <span>Articles</span>
-     <span>Media</span>
-     <span>Likes</span>
+     {tabs.map((tab) => (
+      <span
+       key={tab}
+       className={activeTab === tab ? "active" : ""}
+       onClick={() => setActiveTab(tab)}
+      >
+       {tab}
+      </span>
+     ))}
     </div>
+
+    <FooterNav />
    </div>
   </>
  );

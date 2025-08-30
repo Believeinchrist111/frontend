@@ -127,18 +127,38 @@ div#profile-tab-nav {
   overflow-x: auto;
   gap: 1rem;
   white-space: nowrap;
-  scrollbar-width: thin;
+  scrollbar-width: none;           
+  -ms-overflow-style: none;  
   -webkit-overflow-scrolling: touch;
-  display: inline-block;
   margin-top: 20px;
   border-bottom: 1px solid #2f3336;
 }
 
+div#profile-tab-nav::-webkit-scrollbar {
+  display: none;
+}
+
 div#profile-tab-nav span {
   display: inline-block;
-  flex: 0 0 auto;
   padding: 1rem 1rem;
   cursor: pointer;
   text-align: center;
   color: #6e767d;
+  position: relative;
+}
+
+div#profile-tab-nav span.active {
+  color: #fff; /* highlight active tab text */
+  font-weight: 600;
+}
+
+div#profile-tab-nav span.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #1d9bf0;
+  border-radius: 2px 2px 0 0;
 }

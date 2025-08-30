@@ -1,3 +1,5 @@
+import "./tweet-card.css"
+
 export default function TweetCard() {
  return (
    <div id="tweet-card">

@@ -1,0 +1,91 @@
+/* Stylings for the HomeNav Component */
+nav#home-nav {
+  height: 100px;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-bottom: 1px solid #2f3336;
+  background-color: rgb(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  z-index: 2;
+}
+
+div#menu-container {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 50px;
+  width: 100vw;
+  padding: 0 20px;
+}
+
+div#menu-container #menu-image {
+  height: 40px;
+  width: 40px;
+}
+
+.profile-image {
+  object-fit: cover;
+  border-radius: 30px;
+}
+
+div#menu-container #logo {
+  position: fixed;
+  left: 50%;
+}
+
+div#for-follow-tabs {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+div#for-follow-tabs button {
+  width: 50%;
+  height: 50px;
+  font-size: 0.9em;
+  font-weight: 550;
+  background-color: transparent;
+  color: #e7e9ea;
+  border: none;
+}
+
+/* //////////////////////////////////////////////////////////////////////
+ */
+
+@media screen and (min-width: 31.25em) {
+  /* Stylings for the HomeNav Component */
+  nav#home-nav {
+    height: 50px;
+    left: auto;
+    margin-left: 60px;
+    border-right: 1px solid #2f3336;
+  }
+
+  div#menu-container {
+    display: none;
+  }
+
+  div#for-follow-tabs {
+    width: 100%;
+  }
+}
+
+
+/* //////////////////////////////////////////////////////// */
+
+@media screen and (min-width: 43.75em) {
+  /* Stylings for the HomeNav Component */
+
+  nav#home-nav {
+    width: 640px;
+    right: calc(50% - 350px);
+    margin-left: 0px;
+  }
+}

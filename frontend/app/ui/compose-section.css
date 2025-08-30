@@ -1,0 +1,52 @@
+div#compose-section {
+  display: none;
+}
+
+@media screen and (min-width: 31.25em) {
+  /* Styling for the compose section on the homepage */
+
+  div#compose-section {
+    display: block;
+    position: relative;
+    height: 175px;
+    border-bottom: 1px solid #2f3336;
+    padding-top: 20px;
+  }
+
+  div#compose-section button#post-button {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    height: 40px;
+    width: 70px;
+    margin-right: 20px;
+    border-radius: 20px;
+    background-color: #1da1f2;
+    border: none;
+    color: #eff3f4;
+    font-weight: 800;
+    font-size: 0.8em;
+  }
+
+  div#compose-section div#textarea-container {
+    display: flex;
+    margin-left: 20px;
+  }
+
+  div#compose-section div#textarea-container .textarea-profile-image {
+    border-radius: 50px;
+    margin-right: 10px;
+  }
+
+  div#compose-section div#textarea-container textarea.post-textarea {
+    position: relative;
+    top: 10px;
+    font-size: 1.5em;
+    font-weight: 600;
+    background-color: #000000;
+    color: #eff3f4;
+    border: none;
+    height: 100px;
+    width: 80%;
+  }
+}

@@ -1,0 +1,42 @@
+@media screen and (min-width: 31.25em) {
+  /* Stylings for the composeButton Component */
+  #side-nav-compose-button {
+    display: flex;
+    place-content: center;
+    place-items: center;
+    height: 50px;
+    width: 50px;
+    background-color: #e7e9ea;
+    border: none;
+    border-radius: 30px;
+  }
+
+  #side-nav-compose-button svg.post-icon {
+    fill: #000000;
+  }
+
+  h1#post {
+    display: none;
+  }
+}
+
+/* ///////////////////////////////////////////////////////////////// */
+
+@media screen and (min-width: 75em) {
+  #side-nav-compose-button {
+    width: 250px;
+  }
+  
+  #side-nav-compose-button svg.post-icon {
+    display: none;
+  }
+  
+  h1#post {
+    display: block;
+    width: fit-content;
+    margin: auto 0;
+    font-size: 18px;
+    color: #000000;
+  }
+
+}

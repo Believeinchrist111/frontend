@@ -1,0 +1,41 @@
+/* Stylings for the HomeFooterNav Component */
+nav#footer-nav {
+  position: fixed;
+  background-color: #000000;
+  border-top: 1px solid #2f3336;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+}
+
+div#footer-nav-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 50px;
+}
+
+div#nav-wrapper button h1 {
+  display: none;
+}
+
+nav#footer-nav button {
+  background-color: transparent;
+  border: none;
+  height: 25px;
+  width: 25px;
+}
+
+nav#footer-nav button svg {
+  fill: #e7e9ea;
+}
+
+
+/* ///////////////////////////////////////////////////////////////////// */
+
+
+@media screen and (min-width: 31.25em) {
+ nav#footer-nav{
+  display: none;
+ }
+}
