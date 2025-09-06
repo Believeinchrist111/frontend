@@ -4,13 +4,13 @@ div#home-body{
   max-width: 700px;
 }
 
-
 section#posts-section {
   margin-top: 100px;
   border-right: 1px solid #2f3336;
+  border-left: 1px solid #2f3336;
 }
 
-/* //////////////////////////////////////////////////// */
+/* 500px breakpoint /////////////////////////////////////////// */
 
 @media screen and (min-width: 31.25em) {
   section#posts-section {

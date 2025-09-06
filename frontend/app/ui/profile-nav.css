@@ -1,0 +1,62 @@
+nav#profile-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100vw;
+  height: 50px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: rgb(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid #2f3336;
+  z-index: 1;
+}
+
+button.back-button {
+  width: 20px;
+  height: 20px;
+  background-color: rgb(0, 0, 0, 0);
+  fill: white;
+  border: none;
+  cursor: pointer;
+}
+
+h1#username-post-header {
+  width: 65%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6e767d;
+}
+
+span#user-name {
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+}
+
+button#search-button {
+  width: 20px;
+  height: 20px;
+  background-color: #000000;
+  fill: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* 500px breakpoint /////////////////////////////////////////// */
+
+@media screen and (min-width: 31.25em) {
+  nav#profile-nav {
+    left: auto;
+  }
+}
+
+/* 700px breakpoint /////////////////////////////////////////// */
+
+@media screen and (min-width: 43.75em) {
+  nav#profile-nav {
+    max-width: 542px;
+  }
+}

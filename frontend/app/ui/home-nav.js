@@ -23,8 +23,6 @@ export default function HomeNav({ toggleNav, setToggleNav }) {
     <button>For you</button>
     <button>Following</button>
    </div>
-
- 
   </nav>
  )
 }

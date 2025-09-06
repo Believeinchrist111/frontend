@@ -6,6 +6,7 @@ nav#home-nav {
   top: 0;
   left: 0;
   border-bottom: 1px solid #2f3336;
+  border-left: 1px solid #2f3336;
   background-color: rgb(0, 0, 0, 0.5);
   backdrop-filter: blur(20px);
   z-index: 2;
@@ -56,8 +57,7 @@ div#for-follow-tabs button {
   border: none;
 }
 
-/* //////////////////////////////////////////////////////////////////////
- */
+/* 500px breakpoint /////////////////////////////////////////// */
 
 @media screen and (min-width: 31.25em) {
   /* Stylings for the HomeNav Component */
@@ -78,7 +78,7 @@ div#for-follow-tabs button {
 }
 
 
-/* //////////////////////////////////////////////////////// */
+/* 700px breakpoint /////////////////////////////////////////// */
 
 @media screen and (min-width: 43.75em) {
   /* Stylings for the HomeNav Component */
