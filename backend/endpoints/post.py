@@ -16,6 +16,68 @@ router = APIRouter(
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+# Route to create a new post
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+def create_post(
+    post: schemas.PostCreate, 
+    db: db_dependency, 
+    current_user: int = Depends(oauth2.get_current_user)
+):
+    # Create the post object
+    new_post = models.Post(
+        content=post.content,
+        reply_to_post_id=post.reply_to_post_id,
+        repost_of_post_id=post.repost_of_post_id,
+        is_repost=post.is_repost,
+        owner_id=current_user.id,
+        created_at=datetime.now(timezone.utc)
+    )
+
+    # If media_items are provided, add them
+    if post.media_items:
+        new_post.media_items = [
+            models.Media(file_url=media.file_url, type=media.type)
+            for media in post.media_items
+        ]
+    
+    # If media_url is provided (single media), also add it
+    elif post.media_url:
+        new_post.media_items = [
+            models.Media(file_url=post.media_url, type="image")  # default to "image"
+        ]
+
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+    return new_post
+
+
+
+# @router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+# def create_post(post: schemas.PostCreate, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
+#     new_post = models.Post(
+#         content=post.content,
+#         reply_to_post_id=post.reply_to_post_id,
+#         repost_of_post_id=post.repost_of_post_id,
+#         is_repost=post.is_repost,
+#         owner_id=current_user.id,
+#         created_at=datetime.now(timezone.utc)
+#     )
+
+#     if post.media_items:
+#         new_post.media_items = [
+#             models.Media(file_url=media.file_url, type=media.type)
+#             for media in post.media_items
+#         ]
+
+#     db.add(new_post)
+#     db.commit()
+#     db.refresh(new_post)
+#     return new_post
+
+
+
+
 # this is what gets displayed on the timeline
 @router.get("", response_model=List[schemas.Post])
 def get_posts(db: db_dependency, current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
@@ -31,31 +93,9 @@ def get_posts(db: db_dependency, current_user: int = Depends(oauth2.get_current_
     return posts
 
 
-# Route to create a new post
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
-    new_post = models.Post(
-        content=post.content,
-        reply_to_post_id=post.reply_to_post_id,
-        repost_of_post_id=post.repost_of_post_id,
-        is_repost=post.is_repost,
-        owner_id=current_user.id,
-        created_at=datetime.now(timezone.utc)
-    )
-
-    if post.media_items:
-        new_post.media_items = [
-            models.Media(file_url=media.file_url, type=media.type)
-            for media in post.media_items
-        ]
-
-    db.add(new_post)
-    db.commit()
-    db.refresh(new_post)
-    return new_post
 
 
-# only a user can dleete his own post
+# only a user can delete his own post
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
     query_post = db.query(models.Post).filter(models.Post.id == id)

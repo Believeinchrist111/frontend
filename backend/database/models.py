@@ -56,16 +56,10 @@ class User(Base):
 #     is_verified = Column(Boolean, default=False)
 
 
-# class Media(Base):
-#     __tablename__ = "media"
 
-#     id = Column(Integer, primary_key=True, index=True)
-#     file_url = Column(String(255), nullable=False)
 
-#     post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
 
-#     post = relationship("Post", back_populates="media_items")
-
+# ////////////////////////////////////////////////////////////
 
 
 # class Post(Base):
@@ -97,6 +91,26 @@ class User(Base):
 #     )
 
 #     media_items = relationship("Media", back_populates="post", cascade="all, delete")
+
+
+
+# class Media(Base):
+#     __tablename__ = "media"
+
+#     id = Column(Integer, primary_key=True, index=True)
+#     file_url = Column(String(255), nullable=False)
+
+#     post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
+
+#     post = relationship("Post", back_populates="media_items")
+
+
+
+
+
+
+# //////////////////////////////////////////////////////////////
+
 
 # class MessageStatus(str, enum.Enum):
 #     sent = "sent"

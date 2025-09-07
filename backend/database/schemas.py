@@ -4,6 +4,8 @@ from typing import Annotated, Optional, List
 from pydantic_extra_types.phone_numbers import PhoneNumber
 from fastapi import Form
 
+
+
 # This is a three step process for signup
 # base sign up page
 # verification code sending
@@ -43,35 +45,52 @@ class UserCreate(BaseModel):
    password: str
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+
+
 
 class SendCodeRequest(BaseModel):
     firstname: str
     lastname: str
     email: EmailStr
 
-
 class VerifyCodeRequest(BaseModel):
     email: EmailStr
     code: str
 
-class UserResponse(BaseModel):
-    id: int
-    firstname: str
-    lastname: str
-    email: EmailStr
-    dateOfbirth: date
-
-    model_config = ConfigDict(from_attributes=True)
 
 
-# Post schemas
+
+
+
+# /////////////////////////////////////////////////////////////////
+
+
+
+# This is the request model
+# the form in which posts are created
+
+
+# This is the resonse model for a post
+# when you are creating a post, the user only cares about their input.
+# when it is being displayed, that's when other additional stuff are displayed
+# like the time it was created etc.
+
+
+
+# Post schemas for media
 class MediaItem(BaseModel):
     file_url: str
     type: str
 
     class config:
         from_attributes = True
-
+        
 # base class for a post
 class PostBase(BaseModel):
     content: Optional[str] = None
@@ -79,11 +98,7 @@ class PostBase(BaseModel):
     repost_of_post_id: Optional[int] = None
     is_repost: bool = False
     # published: bool = True ? do we want to support drafts ?
-
-
-# This is the request model
-# the formt in which posts are created
-
+    
 class PostCreate(PostBase):
     media_url: Optional[str] = None
     media_items: Optional[List[MediaItem]] = None
@@ -93,12 +108,17 @@ class PostCreate(PostBase):
         if not self.content and not self.media_url and not self.media_items:
             raise ValueError("Post must have at least content or media.")
         return self
+        
+    
+class UserResponse(BaseModel):
+    id: int
+    firstname: str
+    lastname: str
+    email: EmailStr
+    dateOfbirth: date
 
-# This is the resonse model for a post
-# when you are creating a post, the user only cares about his input.
-# when it is being displayed, that's when other additional stuff are displayed
-# like the time it was created etc.
-
+    model_config = ConfigDict(from_attributes=True)
+    
 class Post(PostBase):
     id: int
     created_at: datetime
@@ -109,13 +129,9 @@ class Post(PostBase):
     class Config:
         from_attributes = True
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
-class TokenData(BaseModel):
-    id: Optional[str] = None
 
+# ////////////////////////////////////////////////////////////
 
 # so for a message request model
 # this is the format we have when we are sending a message to someone
@@ -145,22 +161,6 @@ class MessageResponse(MessageBase):
 
 
 
-    # first_name: constr(strip_whitespace=True, min_length=1, max_length=100)
-    # last_name: constr(strip_whitespace=True, min_length=1, max_length=100)
-
-
-# to be cleaned later
-# let's receive login request as JSON for now
-# can change to forms
-#class LoginRequest(BaseModel):
-#    username: str
-#    password: str
 
 
 
-
-
-
-#class VerifyEmailRequest(BaseModel):
-#    email: str
-#    code: str
