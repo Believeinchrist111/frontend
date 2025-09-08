@@ -3,17 +3,18 @@ div#post-component {
   width: 100vw;
 }
 
+div#post-wrapper {
+  margin: 0 15px;
+}
+
 div#post-component nav {
   display: flex;
   place-items: center;
   justify-content: space-between;
-  padding: 0 20px 0 5px;
   height: 50px;
 }
 
 button#return-button {
-  height: 40px;
-  width: 40px;
   background-color: transparent;
   border: none;
   border-radius: 20px;
@@ -36,24 +37,110 @@ button#post-button {
   font-size: 0.8em;
 }
 
-div#textarea-container {
+div#textarea-img-container {
   display: flex;
-  margin-left: 20px;
 }
 
-div#textarea-container .textarea-profile-image {
+div#textarea-img-container .profile-img {
   border-radius: 50px;
   margin-right: 10px;
 }
 
-div#textarea-container textarea.post-textarea {
+textarea.post-textarea {
   position: relative;
   top: 10px;
-  font-size: 1.5em;
   font-weight: 600;
-  background-color: #000000;
+  background: transparent;
   color: #eff3f4;
+  width: 100%;
+  font-size: 18px;
   border: none;
-  height: 100px;
-  width: 80%;
+  resize: none;
+  outline: none;
+}
+
+div#toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 90px;
+  padding-top: 10px;
+  border-top: 1px solid #6e767d;
+}
+
+div.tools-left {
+  display: flex;
+  gap: 12px;
+  color: #1d9bf0;
+}
+
+button.post-btn {
+  display: none;
+}
+
+/* Grid for multiple previews */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.media-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.media-item img,
+.media-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.remove-media {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+@media screen and (min-width: 40.63em) {
+  div#post-component {
+    display: flex;
+    justify-content: center;
+    background-color: #6e767d;
+  }
+
+  div#post-wrapper {
+    height: fit-content;
+    width: 600px;
+    border-radius: 20px;
+    margin-top: 50px;
+    padding: 10px 30px;
+    background-color: #000000;
+  }
+
+  button#post-button {
+    display: none;
+  }
+
+  button.post-btn {
+    display: block;
+    height: 30px;
+    width: 70px;
+    border-radius: 20px;
+    color: #000000;
+    background-color: white;
+    border: none;
+    font-weight: 800;
+    font-size: 0.8em;
+  }
 }
