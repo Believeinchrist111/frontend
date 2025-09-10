@@ -22,8 +22,10 @@ class EmailVerification(Base):
     code = Column(String(255), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     is_used = Column(Boolean, default=False)    
-    verified = Column(Boolean, default=False)             
-        
+    verified = Column(Boolean, default=False)              
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)  
+    
+    user = relationship("User", back_populates="verifications")
     
 class User(Base):
     __tablename__ = "users"
@@ -37,11 +39,12 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
-    #is_verified = Column(Boolean, default=False)    
+    # is_verified = Column(Boolean, default=False)    
     # picture = Column(String(255), nullable=True) 
 
-    # posts = relationship("Post", back_populates="owner")
-    #verifications = relationship("EmailVerification", back_populates="user")
+    posts = relationship("Post", back_populates="owner")
+    verifications = relationship("EmailVerification", back_populates="user", cascade="all, delete-orphan")
+  
 
 # class Google_user(Base):
 #     __tablename__ = "google_users"
@@ -61,48 +64,48 @@ class User(Base):
 
 # ////////////////////////////////////////////////////////////
 
+  
+class Post(Base):
+    __tablename__ = "posts"
 
-# class Post(Base):
-#     __tablename__ = "posts"
+    id = Column(Integer, primary_key=True, index=True)
 
-#     id = Column(Integer, primary_key=True, index=True)
+    content = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-#     content = Column(Text, nullable=True)
-#     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    owner = relationship("User", back_populates="posts")
 
-#     owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-#     owner = relationship("User", back_populates="posts")
+    reply_to_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
+    replies = relationship(
+        "Post",
+        backref=backref("parent", remote_side=[id]),
+        foreign_keys=[reply_to_post_id]
+        )
 
-#     reply_to_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
-#     replies = relationship(
-#         "Post",
-#         backref=backref("parent", remote_side=[id]),
-#         foreign_keys=[reply_to_post_id]
-#         )
+    is_repost = Column(Boolean, default=False)
 
-#     is_repost = Column(Boolean, default=False)
+    repost_of_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
+    repost = relationship(
+        "Post",
+        remote_side=[id],
+        foreign_keys=[repost_of_post_id],
+        post_update=True
+    )
 
-#     repost_of_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
-#     repost = relationship(
-#         "Post",
-#         remote_side=[id],
-#         foreign_keys=[repost_of_post_id],
-#         post_update=True
-#     )
-
-#     media_items = relationship("Media", back_populates="post", cascade="all, delete")
+    media_items = relationship("Media", back_populates="post", cascade="all, delete")
 
 
 
-# class Media(Base):
-#     __tablename__ = "media"
+class Media(Base):
+    __tablename__ = "media"
 
-#     id = Column(Integer, primary_key=True, index=True)
-#     file_url = Column(String(255), nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    file_url = Column(String(255), nullable=False)
+    type = Column(String(100), nullable=False)
+    post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
 
-#     post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), nullable=False)
-
-#     post = relationship("Post", back_populates="media_items")
+    post = relationship("Post", back_populates="media_items")
 
 
 

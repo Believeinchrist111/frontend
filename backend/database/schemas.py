@@ -88,7 +88,7 @@ class MediaItem(BaseModel):
     file_url: str
     type: str
 
-    class config:
+    class Config:
         from_attributes = True
         
 # base class for a post
@@ -100,14 +100,14 @@ class PostBase(BaseModel):
     # published: bool = True ? do we want to support drafts ?
     
 class PostCreate(PostBase):
-    media_url: Optional[str] = None
+    # media_url: Optional[str] = None
     media_items: Optional[List[MediaItem]] = None
 
-    @model_validator(mode="after")
-    def content_or_media_required(self) -> "PostCreate":
-        if not self.content and not self.media_url and not self.media_items:
-            raise ValueError("Post must have at least content or media.")
-        return self
+    # @model_validator(mode="after")
+    # def content_or_media_required(self) -> "PostCreate":
+    #     if not self.content and not self.media_url and not self.media_items:
+    #         raise ValueError("Post must have at least content or media.")
+    #     return self
         
     
 class UserResponse(BaseModel):
@@ -115,7 +115,7 @@ class UserResponse(BaseModel):
     firstname: str
     lastname: str
     email: EmailStr
-    dateOfbirth: date
+    date_of_birth: date
 
     model_config = ConfigDict(from_attributes=True)
     
@@ -124,7 +124,7 @@ class Post(PostBase):
     created_at: datetime
     owner_id: int
     owner: UserResponse
-    media_items: List[MediaItem]
+    media_items: List[MediaItem] = []
     # model_config = ConfigDict(arbitrary_types_allowed=True)
     class Config:
         from_attributes = True

@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Cookie
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
@@ -109,7 +109,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def verify_access_token(token: str = Depends(oauth2_bearer), credentials_exception=None):
+def verify_access_token(token: str, credentials_exception=None):
     if credentials_exception is None:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -128,15 +128,41 @@ def verify_access_token(token: str = Depends(oauth2_bearer), credentials_excepti
 
     return token_data
 
+
+
+
 # /////////////////////////////////////////////////////////////////////
 
-def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
+# def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(get_db)):
+#     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
 
-    token = verify_access_token(token, credentials_exception)
+#     token = verify_access_token(token, credentials_exception)
 
-    user = db.query(models.User).filter(models.User.id == token.id).first()
+#     user = db.query(models.User).filter(models.User.id == token.id).first()
 
+#     return user
+
+
+def get_current_user(
+    db: Session = Depends(get_db),
+    token: str | None = Cookie(default=None),  # get from cookie only
+):
+    print('//////////////////////////////////////////')
+    print(token)
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+
+    token_data = verify_access_token(token)
+
+    user = db.query(models.User).filter(models.User.id == token_data.id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+    print('//////////////////////////////////////////')
+    print(user)
     return user
-
-

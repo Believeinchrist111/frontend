@@ -13,6 +13,8 @@ export default function Post() {
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState("");
 
+
+
  // Handle multiple uploads
  const handleMediaChange = (e) => {
   const files = Array.from(e.target.files);
@@ -29,7 +31,7 @@ export default function Post() {
  };
 
  const handlePost = async () => {
-  if (!content.trim() && !mediaUrl.trim()) {
+  if (!content.trim() && media.length === 0) {
    setError("Post must have at least content or media.");
    return;
   }
@@ -38,33 +40,52 @@ export default function Post() {
   setError("");
 
   try {
-   const response = await fetch("http://127.0.0.1:8000/posts", {
+   // Step 1: Upload files if any
+   let uploadedMediaItems = [];
+   if (media.length > 0) {
+    const formData = new FormData();
+    media.forEach((m) => formData.append("files", m.file));
+
+    const uploadRes = await fetch("http://127.0.0.1:8000/upload-media", {
+     method: "POST",
+     body: formData,
+    });
+
+    if (!uploadRes.ok) throw new Error("Failed to upload media");
+
+    const uploadData = await uploadRes.json();
+    uploadedMediaItems = uploadData.media_items; // [{ file_url, type }]
+   }
+
+   // Step 2: Create the post with uploaded media
+   const response = await fetch("/api/posts", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+     "Content-Type": "application/json",
+    },
+    credentials: "include",
     body: JSON.stringify({
      content,
      reply_to_post_id: null,
      repost_of_post_id: null,
      is_repost: false,
-     media_url: mediaUrl || null,
-     media_items: mediaUrl
-      ? [{ file_url: mediaUrl, type: "image" }]
-      : null, // adjust if you add more media types
+     media_items: uploadedMediaItems.length > 0 ? uploadedMediaItems : null,
     }),
    });
 
-   const data = await response.json();
-   setLoading(false);
-
-   if (response.ok) {
-    console.log("Post created:", data);
-    window.location.href = "/";
-   } else {
-    setError(data.detail || "Failed to post");
+   if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Failed to create post");
    }
+
+   const data = await response.json();
+   console.log("Post created:", data);
+
+   setContent("");
+   setMedia([]);
   } catch (err) {
-   console.error(err);
-   setError("Something went wrong");
+   setError(err.message || "Something went wrong");
+  } finally {
    setLoading(false);
   }
  };

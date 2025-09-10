@@ -54,9 +54,10 @@ async def login_for_access_token(
     print(access_token)
     print('the token in the sign in endpoint')
 
-    response = JSONResponse(content={
+    response = JSONResponse(
+        content={
         "message": "Login successful",
-        "access_token": access_token,
+        # "access_token": access_token,
         "token_type": "bearer"
     })
 
@@ -67,6 +68,7 @@ async def login_for_access_token(
         secure=False,  # Change to True in production
         samesite="lax",
         max_age= 30 * 60,
+        # domain="localhost"  
     )
     return response
 
@@ -74,10 +76,6 @@ async def login_for_access_token(
 # end point for signin verification token
 @router.get("/verify-token")
 async def verify_token(token: str = Depends(oauth2_bearer)):
-    print("the token in the verify token endpoint")
-    print(token)
-    print("the token in the verify token endpoint")
-
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or expired token",
@@ -85,9 +83,13 @@ async def verify_token(token: str = Depends(oauth2_bearer)):
     )
 
     token_data = oauth2.verify_access_token(token, credentials_exception)
-    return {"user_id": token_data.id}
+    return
 
 
+
+
+
+# //////////////////////////////////////////////////////////////////
 
 # loging in with google
 @router.get("/login/google")

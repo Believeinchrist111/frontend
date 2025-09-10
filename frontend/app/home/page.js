@@ -11,35 +11,54 @@ import SideNav from "../ui/side-nav";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 
-export default function Home({ token }) {
+
+export default function Home() {
   const [toggleNav, setToggleNav] = useState(false)
   const [togglePost, setTogglePost] = useState(false)
-  const router = useRouter()
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true); // loading state
+  const [error, setError] = useState(null);     // error state
 
-  // useEffect(() => {
-  //   const verifyToken = async () => {
-  //     try{
-  //       const response = await fetch(`http://127.0.0.1:8000/login`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       }
-  //     });
 
-  //       if (!response.ok) {
-  //         router.push('/')
-  //         throw new Error('Token verification failed');
-  //       }
-  //     } catch (error) {
-  //       router.push('/sign-in')
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  //   verifyToken();
-  // }, [router])
+        const response = await fetch("/api/users/", {
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // important for cookie auth
+        });
 
+        if (!response.ok) {
+          throw new Error("Failed to fetch user");
+        }
+
+        const userData = await response.json();
+        setUser(userData);
+
+
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+
+  // if (!user) {
+  //   return <p>Loading user...</p>;
+  // }
+
+  // conditional rendering
+  if (loading) return <p>Loading user...</p>;
+  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
   return (
     <>
@@ -47,12 +66,10 @@ export default function Home({ token }) {
         <HomeNav toggleNav={toggleNav} setToggleNav={setToggleNav} />
         <section id="posts-section">
           <ComposeSection />
-          <TweetCard />
-          <TweetCard />
-          <TweetCard />
-          <TweetCard />
-          <TweetCard />
-          <TweetCard />
+          <TweetCard user={user} />
+          <TweetCard user={user} />
+          <TweetCard user={user} />
+          <TweetCard user={user} />
         </section>
         <SideNav />
         <FooterNav />

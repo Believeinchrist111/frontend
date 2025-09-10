@@ -47,4 +47,5 @@ backend/endpoints/__pycache__
 
 backend/env
 backend/utility/__pycache__
+backend/uploads
 #backend/.env

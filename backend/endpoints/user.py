@@ -10,15 +10,16 @@ from database.database import get_db
 router = APIRouter(prefix="/users")
 
 user_dependency = Annotated[Session, Depends(get_current_user)]
+
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
 
-@router.get("/", status_code = status.HTTP_200_OK)
+@router.get("", status_code = status.HTTP_200_OK, response_model=schemas.UserResponse)
 async def user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    return {"User": user}
+    return user
 
 
 

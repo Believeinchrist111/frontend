@@ -119,6 +119,7 @@ async def sign_up(user: schemas.UserCreate, db: db_dependency):
         secure=False,   # set True in production
         samesite="lax",
         max_age=30 * 60,
+        domain="localhost"  
     )
     return response
     

@@ -1,12 +1,12 @@
 import "./tweet-card.css"
 
-export default function TweetCard() {
+export default function TweetCard({user}) {
  return (
    <div id="tweet-card">
     <div id="profile-info">
      <div id="profile-image"></div>
      <div id="handle-container">
-      <div id="user-name">Mark Manson</div>
+      <div id="user-name">{user.firstname} {user.lastname}</div>
       <div id="user-account-name">@IAmMarkManson</div>
      </div>
      <button type="button">...</button>
