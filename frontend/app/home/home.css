@@ -1,10 +1,13 @@
-div#home-body{
+div#home-body {
   position: relative;
   display: flex;
-  max-width: 700px;
+  width: 100%;
+  max-width: 698px;
 }
 
 section#posts-section {
+  width: 100%;
+  max-width: 638px;
   margin-top: 100px;
   border-right: 1px solid #2f3336;
   border-left: 1px solid #2f3336;
@@ -18,4 +21,3 @@ section#posts-section {
     margin-top: 50px;
   }
 }
-

@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import "./toggle-side-nav.css"
 
-export default function ToggleSideNav({ toggleNav, setToggleNav }) {
+export default function ToggleSideNav({ toggleNav, setToggleNav, user }) {
 
 
  return (
@@ -25,7 +25,7 @@ export default function ToggleSideNav({ toggleNav, setToggleNav }) {
        </Link>
       </div>
       <div id="handle-container">
-       <Link href="/profile" id="user-name">Emmanuel Nyarko</Link>
+       <Link href="/profile" id="user-name">{user.firstname} {user.lastname}</Link>
        <Link href="/profile" id="user-account-name">@Emmakoko</Link>
        <div id="following-followers-container"><button><span id="following-number">31</span> Following</button><button><span id="followers-number">10</span> Followers</button></div>
       </div>

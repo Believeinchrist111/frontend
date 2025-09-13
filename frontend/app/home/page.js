@@ -1,5 +1,9 @@
 'use client'
 
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Link from "next/link";
+
 import "./home.css";
 import ComposeSection from "../ui/compose-section.js";
 import TweetCard from "../ui/tweet-card.js"
@@ -8,55 +12,26 @@ import FooterNav from "../ui/footer-nav.js"
 import ToggleSideNav from "../ui/toggle-side-nav";
 import SideNav from "../ui/side-nav";
 
-
-import { useState, useEffect } from "react";
-import Link from "next/link";
-
+import { fetchUser } from "../lib/slices/userSlice";
+import { fetchPosts } from "../lib/slices/postSlice";
 
 
 export default function Home() {
   const [toggleNav, setToggleNav] = useState(false)
   const [togglePost, setTogglePost] = useState(false)
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true); // loading state
-  const [error, setError] = useState(null);     // error state
 
+  const dispatch = useDispatch()
+  const { user, loading, error } = useSelector((state) => state.user);
+  const { posts } = useSelector((state) => state.posts)
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch("/api/users/", {
-          headers: { "Content-Type": "application/json" },
-          credentials: "include", // important for cookie auth
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user");
-        }
-
-        const userData = await response.json();
-        setUser(userData);
-
-
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-
-  // if (!user) {
-  //   return <p>Loading user...</p>;
-  // }
+    dispatch(fetchUser())
+    dispatch(fetchPosts())
+  }, [dispatch]);
 
   // conditional rendering
+
+  if (!user) return <p>Loading...</p>;
   if (loading) return <p>Loading user...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
@@ -66,14 +41,15 @@ export default function Home() {
         <HomeNav toggleNav={toggleNav} setToggleNav={setToggleNav} />
         <section id="posts-section">
           <ComposeSection />
-          <TweetCard user={user} />
-          <TweetCard user={user} />
-          <TweetCard user={user} />
-          <TweetCard user={user} />
+          {posts.map((post) => (
+            <div key={post.id} className="border-b p-4">
+              <TweetCard user={user} post={post} />
+            </div>
+          ))}
         </section>
-        <SideNav />
+        <SideNav user={user} />
         <FooterNav />
-        <ToggleSideNav toggleNav={toggleNav} setToggleNav={setToggleNav} />
+        <ToggleSideNav toggleNav={toggleNav} setToggleNav={setToggleNav} user={user} />
 
         <Link href='/compose/post'>
           <button id="compose-button" onClick={() => setTogglePost(!togglePost)}>

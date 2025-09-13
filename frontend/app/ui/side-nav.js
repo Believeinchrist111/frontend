@@ -4,7 +4,7 @@ import Image from "next/image"
 import "./side-nav.css"
 import ComposeButton from "./compose-button.js"
 
-export default function SideNav() {
+export default function SideNav({user}) {
 
 
  return (
@@ -63,7 +63,7 @@ export default function SideNav() {
       />
 
       <div id="side-nav-handle-container">
-       <div id="user-name">Emmanuel Nyarko</div>
+       <div id="user-name">{user.firstname} {user.lastname}</div>
        <div id="user-account-name">@Emmakoko</div>
       </div>
 

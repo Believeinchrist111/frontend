@@ -112,11 +112,13 @@ button.post-btn {
   color: white;
 }
 
+/* ////////////////////////////////////////////////////////////// */
+
 @media screen and (min-width: 40.63em) {
   div#post-component {
     display: flex;
     justify-content: center;
-    background-color: #6e767d;
+    background-color: rgba(29, 161, 242, 0.15);
   }
 
   div#post-wrapper {

@@ -21,7 +21,7 @@ div#profile-info #profile-image {
 
 div#profile-info #handle-container {
   margin-left: 5px;
-}
+}  
 
 div#handle-container #user-name {
   font-weight: 600;
@@ -51,6 +51,61 @@ p#tweet-message {
   padding-right: 20px;
 }
 
+/* Media wrapper */
+#tweet-media {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  margin-left: 60px;
+  border-radius: 16px;
+  border: 1px solid #2f3336;
+  overflow: hidden;
+  width: 100%;
+  max-width: 550px;
+  max-height: 55vh; /* prevent super tall media */
+}
+
+/* Single media (full width) */
+#tweet-media img,
+#tweet-media video {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 16px;
+  /* border: 1px solid #2f3336; */
+}
+
+/* 2 items: side by side */
+#tweet-media.two {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* 3 items: one big on left, two stacked on right */
+#tweet-media.three {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+#tweet-media.three img:first-child,
+#tweet-media.three video:first-child {
+  grid-row: span 2;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 4 items: perfect 2x2 grid */
+#tweet-media.four {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* Ensure videos behave like images */
+#tweet-media video {
+  background: #000;
+}
+
+
+
+
 div#tweet-interactions {
   display: flex;
   justify-content: space-between;
@@ -68,5 +123,4 @@ div#tweet-interactions svg {
   width: 20px;
 }
 
-/* ////////////////////////////////////////////////////////////////// */
 

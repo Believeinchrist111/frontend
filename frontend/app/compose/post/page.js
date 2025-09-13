@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createPost } from "../../lib/slices/postSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { Smile, Image as ImageIcon } from "lucide-react";
@@ -8,12 +10,11 @@ import { Smile, Image as ImageIcon } from "lucide-react";
 import "./page.css"
 
 export default function Post() {
+ const dispatch = useDispatch();
+ const { loading, error } = useSelector((state) => state.posts);
+
  const [content, setContent] = useState("");
  const [media, setMedia] = useState([]);
- const [loading, setLoading] = useState(false);
- const [error, setError] = useState("");
-
-
 
  // Handle multiple uploads
  const handleMediaChange = (e) => {
@@ -30,64 +31,22 @@ export default function Post() {
   setMedia((prev) => prev.filter((_, i) => i !== index));
  };
 
- const handlePost = async () => {
+
+ const handlePost = () => {
   if (!content.trim() && media.length === 0) {
-   setError("Post must have at least content or media.");
+   alert("Post must have at least content or media.");
    return;
   }
 
-  setLoading(true);
-  setError("");
-
-  try {
-   // Step 1: Upload files if any
-   let uploadedMediaItems = [];
-   if (media.length > 0) {
-    const formData = new FormData();
-    media.forEach((m) => formData.append("files", m.file));
-
-    const uploadRes = await fetch("http://127.0.0.1:8000/upload-media", {
-     method: "POST",
-     body: formData,
-    });
-
-    if (!uploadRes.ok) throw new Error("Failed to upload media");
-
-    const uploadData = await uploadRes.json();
-    uploadedMediaItems = uploadData.media_items; // [{ file_url, type }]
-   }
-
-   // Step 2: Create the post with uploaded media
-   const response = await fetch("/api/posts", {
-    method: "POST",
-    headers: {
-     "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
-     content,
-     reply_to_post_id: null,
-     repost_of_post_id: null,
-     is_repost: false,
-     media_items: uploadedMediaItems.length > 0 ? uploadedMediaItems : null,
-    }),
+  dispatch(createPost({ content, media }))
+   .unwrap()
+   .then(() => {
+    setContent("");
+    setMedia([]);
+   })
+   .catch((err) => {
+    console.error("Failed to post:", err);
    });
-
-   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || "Failed to create post");
-   }
-
-   const data = await response.json();
-   console.log("Post created:", data);
-
-   setContent("");
-   setMedia([]);
-  } catch (err) {
-   setError(err.message || "Something went wrong");
-  } finally {
-   setLoading(false);
-  }
  };
 
  return (
@@ -167,6 +126,7 @@ export default function Post() {
 
       <button
        className={`post-btn ${content.trim() || media.length ? "active" : ""}`}
+       onClick={handlePost}
        disabled={!content.trim() && !media.length}
       >
        Post

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 # DATABASE_URL = "sqlite:///./test.db"
-DATABASE_URL =  "mysql+pymysql://root:password@localhost:3306/believe"
+DATABASE_URL =  "mysql+pymysql://root:@localhost:3306/believe"
 
 engine = create_engine(DATABASE_URL)
 
@@ -14,6 +14,6 @@ def get_db():
     try:
         yield db
     finally:
-        db.close()
+        db.close()   
    
 

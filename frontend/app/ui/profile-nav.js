@@ -3,7 +3,7 @@
 import "./profile-nav.css"
 import { useRouter } from "next/navigation";
 
-export default function ProfileNav() {
+export default function ProfileNav({user}) {
  const router = useRouter()
 
  return (
@@ -14,7 +14,7 @@ export default function ProfileNav() {
    </button>
 
    <h1 id="username-post-header">
-    <span id="user-name">Emmanuel Nyarko</span>
+    <span id="user-name">{user.firstname} {user.lastname}</span>
     <span id="tab-label-number">16</span>
     <span id="active-tab"> posts</span>
    </h1>
