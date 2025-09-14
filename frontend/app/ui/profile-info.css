@@ -81,8 +81,10 @@ span#followers-number {
 
 div#profile-tab-nav {
   /* display: flex; */
+
   overflow-x: auto;
   /* white-space: nowrap; */
+  /* width: 100%; */
   /* max-width: 580px; */
   margin-top: 20px;
   scrollbar-width: none;
