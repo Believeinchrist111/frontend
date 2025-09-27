@@ -41,8 +41,9 @@ async def upload_media(files: List[UploadFile] = File(...)):
     return JSONResponse(content={"media_items": file_urls})
 
 
+
 # Route to create a new post
-@posts_router.post("", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+@posts_router.post("/create_post", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 def create_post(
     post: schemas.PostCreate, 
     db: db_dependency, 
@@ -74,8 +75,6 @@ def create_post(
 
 
 
-
-
 # this is what gets displayed on the timeline
 @posts_router.get("", response_model=List[schemas.Post])
 def get_posts(db: db_dependency, current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
@@ -92,9 +91,69 @@ def get_posts(db: db_dependency, current_user: int = Depends(oauth2.get_current_
 
 
 
+# Endpoint for getting a post
+@posts_router.get("/{post_id}")
+def get_post(post_id: int, db: db_dependency):
+    # Using joinedload so owner and media_items load eagerly
+    post = (
+        db.query(models.Post)
+        .options(
+            joinedload(models.Post.owner),
+            joinedload(models.Post.media_items),
+            joinedload(models.Post.replies),
+            joinedload(models.Post.repost)
+        )
+        .filter(models.Post.id == post_id)
+        .first()
+    )
+
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # Serializing the post manually into JSON-compatible dict
+    return {
+        "id": post.id,
+        "content": post.content,
+        "created_at": post.created_at,
+        "reply_to_post_id": post.reply_to_post_id,
+        "is_repost": post.is_repost,
+        "repost_of_post_id": post.repost_of_post_id,
+        "owner": {
+            "id": post.owner.id,
+            "firstname": post.owner.firstname,
+            "lastname": post.owner.lastname,
+            "email": post.owner.email,
+            "date_of_birth": post.owner.date_of_birth,
+        } if post.owner else None,
+        "media_items": [
+            {
+                "file_url": media.file_url,
+                "type": media.type,
+            }
+            for media in post.media_items
+        ],
+        "replies": [
+            {
+                "id": reply.id,
+                "content": reply.content,
+                "created_at": reply.created_at,
+                "owner_id": reply.owner_id,
+            }
+            for reply in post.replies
+        ],
+        "repost": {
+            "id": post.repost.id,
+            "content": post.repost.content,
+            "owner_id": post.repost.owner_id,
+        } if post.repost else None,
+    }
+
+
+
+
 
 # only a user can delete his own post
-@posts_router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@posts_router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
     query_post = db.query(models.Post).filter(models.Post.id == id)
     deleted_post = query_post.first()
@@ -112,7 +171,7 @@ def delete_post(id: int, db: db_dependency, current_user: int = Depends(oauth2.g
 
 
 # Route to update a post by ID
-@posts_router.put("/{id}", response_model=schemas.Post)
+@posts_router.put("/{post_id}", response_model=schemas.Post)
 def update_post(id: int, post: schemas.PostCreate, db: db_dependency, current_user: int = Depends(oauth2.get_current_user)):
     query_post = db.query(models.Post).filter(models.Post.id == id)
     filtered_post = query_post.first()

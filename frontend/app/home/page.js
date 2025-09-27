@@ -41,9 +41,9 @@ export default function Home() {
         <HomeNav toggleNav={toggleNav} setToggleNav={setToggleNav} />
         <section id="posts-section">
           <ComposeSection />
-          {posts.map((post) => (
-            <div key={post.id} className="border-b p-4">
-              <TweetCard user={user} post={post} />
+          {posts.map((postInfo) => (
+            <div key={postInfo.id} className="border-b p-4">
+              <TweetCard postInfo={postInfo} />
             </div>
           ))}
         </section>

@@ -60,8 +60,6 @@ class User(Base):
 
 
 
-
-
 # ////////////////////////////////////////////////////////////
 
   
@@ -69,14 +67,13 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
-
     content = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     owner = relationship("User", back_populates="posts")
-
+    
     reply_to_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
+    
     replies = relationship(
         "Post",
         backref=backref("parent", remote_side=[id]),
@@ -86,6 +83,7 @@ class Post(Base):
     is_repost = Column(Boolean, default=False)
 
     repost_of_post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
+    
     repost = relationship(
         "Post",
         remote_side=[id],

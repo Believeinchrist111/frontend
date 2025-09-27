@@ -107,7 +107,7 @@ export default function Post() {
      )}
 
 
-     <div id="toolbar">
+     <div className="toolbar">
       <div className="tools-left">
        <label className="icon-btn">
         <input

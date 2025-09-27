@@ -1,0 +1,46 @@
+nav#post-nav {
+  display: flex;
+  align-items: center;
+  width: 100vw;
+  height: 50px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: rgb(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid #2f3336;
+  z-index: 1;
+}
+
+button.back-button {
+  width: 20px;
+  height: 20px;
+  margin-left: 15px;
+  background-color: rgb(0, 0, 0, 0);
+  fill: white;
+  border: none;
+  cursor: pointer;
+ }
+
+h1#post {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  margin-left: 25px;
+}
+
+/* 500px breakpoint /////////////////////////////////////////// */
+
+@media screen and (min-width: 31.25em) {
+  nav#post-nav {
+    left: auto;
+  }
+}
+
+/* 700px breakpoint /////////////////////////////////////////// */
+
+@media screen and (min-width: 43.75em) {
+  nav#post-nav {
+    max-width: 542px;
+  }
+}

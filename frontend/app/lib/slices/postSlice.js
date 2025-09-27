@@ -32,7 +32,7 @@ export const createPost = createAsyncThunk(
       }
 
       // Step 2: Create the post with uploaded media
-      const response = await fetch("/api/posts", {
+      const response = await fetch("/api/posts/create_post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

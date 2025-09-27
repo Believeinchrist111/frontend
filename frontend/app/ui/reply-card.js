@@ -1,32 +1,33 @@
 import Link from "next/link"
 
-import "./tweet-card.css"
+import "./reply-card.css"
 
 
-export default function TweetCard({ postInfo }) {
-  const mediaCount = postInfo.media_items?.length || 0;
+export default function ReplyCard({ replyInfo }) {
+  const mediaCount = replyInfo.media_items?.length || 0;
 
   return (
-    <div id="tweet-card">
+    <div id="reply-card">
+
       <div id="profile-info">
         <div id="profile-image"></div>
         <div id="handle-container">
           <div id="user-name">
-            {postInfo.owner.firstname} {postInfo.owner.lastname}
+            {replyInfo.owner.firstname} {replyInfo.owner.lastname}
           </div>
           <div id="user-account-name">@IAmMarkManson</div>
         </div>
         <button type="button">...</button>
       </div>
 
-      <Link href={`/${postInfo.owner.firstname.toLowerCase()}/status/${postInfo.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+      {/* <Link href={`/${replyInfo.owner.firstname.toLowerCase()}/status/${replyInfo.id}`} style={{ textDecoration: "none", color: "inherit" }}> */}
         <div id="tweet-content-interact-wrapper">
-          {postInfo.content && <p id="tweet-message">{postInfo.content}</p>}
+          {replyInfo.content && <p id="tweet-message">{replyInfo.content}</p>}
 
           {/* Media section */}
           {mediaCount > 0 && (
             <div
-              id="tweet-media"
+              id="reply-media"
               className={
                 mediaCount === 2
                   ? "two"
@@ -38,7 +39,7 @@ export default function TweetCard({ postInfo }) {
               }
             >
 
-              {postInfo.media_items?.map((media, index) => (
+              {replyInfo.media_items?.map((media, index) => (
                 <div className="media-wrapper" key={index}>
                   {media.type === "image" ? (
                     <img src={media.file_url} alt={`media-${index}`} />
@@ -74,7 +75,7 @@ export default function TweetCard({ postInfo }) {
             </div>
           </div>
         </div>
-      </Link>
+      {/* </Link> */}
     </div>
   );
 }

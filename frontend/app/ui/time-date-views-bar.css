@@ -1,0 +1,9 @@
+div#time-date-views-bar{
+ display: flex;
+ align-items: center;
+ color: #6e767d;
+}
+
+span.views{
+ color: white;
+}

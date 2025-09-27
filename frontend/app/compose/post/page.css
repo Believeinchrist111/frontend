@@ -59,13 +59,13 @@ textarea.post-textarea {
   outline: none;
 }
 
-div#toolbar {
+div.toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 90px;
   padding-top: 10px;
-  border-top: 1px solid #6e767d;
+  border-top: 1px solid #2f3336;
 }
 
 div.tools-left {
