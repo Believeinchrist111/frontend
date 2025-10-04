@@ -74,8 +74,6 @@ class VerifyCodeRequest(BaseModel):
 
 # This is the request model
 # the form in which posts are created
-
-
 # This is the resonse model for a post
 # when you are creating a post, the user only cares about their input.
 # when it is being displayed, that's when other additional stuff are displayed
@@ -83,7 +81,7 @@ class VerifyCodeRequest(BaseModel):
 
 
 
-# Post schemas for media
+# Schema for Post media
 class MediaItem(BaseModel):
     file_url: str
     type: str
@@ -91,7 +89,7 @@ class MediaItem(BaseModel):
     class Config:
         from_attributes = True
         
-# base class for a post
+# Base schema for a Post
 class PostBase(BaseModel):
     content: Optional[str] = None
     reply_to_post_id: Optional[int] = None
@@ -99,35 +97,43 @@ class PostBase(BaseModel):
     is_repost: bool = False
     # published: bool = True ? do we want to support drafts ?
     
-class PostCreate(PostBase):
-    # media_url: Optional[str] = None
+class CreatePostRequest(PostBase):
     media_items: Optional[List[MediaItem]] = None
 
-    # @model_validator(mode="after")
-    # def content_or_media_required(self) -> "PostCreate":
-    #     if not self.content and not self.media_url and not self.media_items:
-    #         raise ValueError("Post must have at least content or media.")
-    #     return self
         
-    
 class UserResponse(BaseModel):
     id: int
     firstname: str
     lastname: str
-    email: EmailStr
-    date_of_birth: date
+    # email: EmailStr
+    # date_of_birth: date
 
     model_config = ConfigDict(from_attributes=True)
     
-class Post(PostBase):
+class PostResponse(PostBase):
     id: int
     created_at: datetime
     owner_id: int
     owner: UserResponse
     media_items: List[MediaItem] = []
-    # model_config = ConfigDict(arbitrary_types_allowed=True)
+    
+    # Recursive fields
+    replies: List["PostResponse"] = []   # children (thread replies)
+    parent: Optional["PostResponse"] = None  # optional parent post
+    repost: Optional["PostResponse"] = None  # original post if it's a repost
+    
     class Config:
         from_attributes = True
+        
+    # model_config = ConfigDict(arbitrary_types_allowed=True)
+        
+# Enable recursion
+PostResponse.model_rebuild()
+
+
+class CreateReplyRequest(PostBase):
+    media_items: Optional[List[MediaItem]] = None
+    
 
 
 

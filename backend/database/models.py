@@ -64,7 +64,7 @@ class User(Base):
 
   
 class Post(Base):
-    __tablename__ = "posts"
+    __tablename__ = "posts"  
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=True)
@@ -92,6 +92,7 @@ class Post(Base):
     )
 
     media_items = relationship("Media", back_populates="post", cascade="all, delete")
+
 
 
 

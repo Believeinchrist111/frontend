@@ -23,6 +23,6 @@ export async function middleware(request) {
 
 
 export const config = {
- matcher: ["/"], // protect homepage
+ matcher: ["/", "/home"], // protect homepage
 };
 

@@ -1,1 +1,131 @@
- 
+ /* Stylings for the TweetCard Component */
+
+div#reply-card {
+  padding: 10px 0;
+  border-bottom: 1px solid #2f3336;
+}
+
+div#profile-info {
+  position: relative;
+  display: flex;
+  place-items: center;
+  padding-left: 15px;
+}
+
+div#profile-info #profile-image {
+  height: 40px;
+  width: 40px;
+  border-radius: 30px;
+  background-color: orangered;
+}
+
+div#profile-info #handle-container {
+  margin-left: 5px;
+}  
+
+div#handle-container #user-name {
+  font-weight: 600;
+}
+
+div#handle-container #user-account-name {
+  margin-top: 2px;
+  color: #6e767d;
+}
+
+div#profile-info button {
+  position: absolute;
+  color: #6e767d;
+  background-color: transparent;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+  right: 0;
+  margin-right: 20px;
+}
+
+div#reply-content-interact-wrapper{
+  margin-left: 60px;
+  padding-right: 20px;
+}
+
+p#reply-message {
+  font-size: 0.95em;
+  line-height: 20px;
+  margin-top: 8px;
+}
+
+/* Media container */
+#reply-media {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  max-height: 55vh;
+  border: 1px solid #2f3336;
+
+}
+
+/* Wrap each media */
+.media-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Image & Video inside wrapper */
+.media-wrapper img,
+.media-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Layout rules */
+#reply-media.one {
+  grid-template-columns: 1fr;
+}
+
+#reply-media.two {
+  grid-template-columns: 1fr 1fr;
+}
+
+#reply-media.three {
+  grid-template-columns: 1.5fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+#reply-media.three .media-wrapper:first-child {
+  grid-row: span 2; /* big media on left */
+}
+
+#reply-media.four {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+
+
+
+
+div#reply-interactions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+div#reply-interactions div {
+  width: 40px;
+}
+
+div#reply-interactions svg {
+  fill: #6e767d;
+  height: 20px;
+  width: 20px;
+}
+
+

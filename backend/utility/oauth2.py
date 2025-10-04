@@ -17,16 +17,6 @@ SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
-# conf = ConnectionConfig(
-#     MAIL_USERNAME="you@example.com",
-#     MAIL_PASSWORD="yourpassword",
-#     MAIL_FROM="you@example.com",
-#     MAIL_PORT=587,
-#     MAIL_SERVER="random.random.com",
-#     MAIL_STARTTLS=True,
-#     MAIL_SSL_TLS=False,
-#     USE_CREDENTIALS=True
-# )
 
 
 
@@ -133,14 +123,6 @@ def verify_access_token(token: str, credentials_exception=None):
 
 # /////////////////////////////////////////////////////////////////////
 
-# def get_current_user(token: str = Depends(oauth2_bearer), db: Session = Depends(get_db)):
-#     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
-
-#     token = verify_access_token(token, credentials_exception)
-
-#     user = db.query(models.User).filter(models.User.id == token.id).first()
-
-#     return user
 
 
 def get_current_user(

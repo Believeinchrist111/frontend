@@ -1,30 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Thunk: Fetch a post from backend
-export const getPost = createAsyncThunk('posts/getPost', async (id) => {
-  const res = await fetch(`/api/posts/${id}`, {
-   cache: "no-store", // Always fetch fresh data
-  });
- 
-  if (!res.ok) {
-   throw new Error("Failed to fetch post");
-  }
- 
-  const data = await res.json();
-  return data;
-})
-
 // Thunk: Fetch posts from backend
-export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const res = await fetch("/api/posts", { credentials: "include" });
-  if (!res.ok) throw new Error("Failed to fetch posts");
+export const fetchReplies = createAsyncThunk("posts/fetchReplies", async (postId) => {
+  const res = await fetch(`/api/posts/${postId}`, { 
+   credentials: "include" 
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch replies");
+  
   return await res.json();
 });
 
 // Thunk for creating a new post
-export const createPost = createAsyncThunk(
-  "posts/createPost",
-  async ({ content, media }, { rejectWithValue }) => {
+export const createReplies = createAsyncThunk(
+  "posts/createReplies",
+  async ({ postId, content, media }, { rejectWithValue }) => {
     try {
       // Step 1: Upload files if any
       let uploadedMediaItems = [];
@@ -46,15 +36,15 @@ export const createPost = createAsyncThunk(
       }
 
       // Step 2: Create the post with uploaded media
-      const response = await fetch("/api/posts/create_post", {
+      const response = await fetch(`/api/posts/${postId}/create_reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // ensures cookie is sent
+        credentials: "include", 
         body: JSON.stringify({
           content,
-          reply_to_post_id: null,
+          reply_to_post_id: postId,
           repost_of_post_id: null,
           is_repost: false,
           media_items: uploadedMediaItems.length > 0 ? uploadedMediaItems : null,
@@ -63,7 +53,7 @@ export const createPost = createAsyncThunk(
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to create post");
+        throw new Error(errorData.detail || "Failed to create reply");
       }
 
       const data = await response.json();
@@ -74,57 +64,43 @@ export const createPost = createAsyncThunk(
   }
 );
 
-const postSlice = createSlice({
-  name: "posts",
+const replySlice = createSlice({
+  name: "replies",
   initialState: {
-    post: null,
-    posts: [],       // all posts
+    replies: [],       // all replies to a post
     loading: false, // whether fetching or creating is happening
     error: null,    // error messages
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch a post
-      .addCase(getPost.pending, (state) => {
+      // Fetch replies
+      .addCase(fetchReplies.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getPost.fulfilled, (state, action) => {
+      .addCase(fetchReplies.fulfilled, (state, action) => {
         state.loading = false;
-        state.post = action.payload;
+        state.replies = action.payload;
       })
-      .addCase(getPost.rejected, (state, action) => {
+      .addCase(fetchReplies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
 
-      // Fetch posts
-      .addCase(fetchPosts.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.posts = action.payload;
-      })
-      .addCase(fetchPosts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-
-      // Create post
-      .addCase(createPost.pending, (state) => {
+      // Create reply
+      .addCase(createReplies.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createPost.fulfilled, (state, action) => {
+      .addCase(createReplies.fulfilled, (state, action) => {
         state.loading = false;
-        state.posts.unshift(action.payload); // add new post to top
+        state.replies.unshift(action.payload); // add new post to top
       })
-      .addCase(createPost.rejected, (state, action) => {
+      .addCase(createReplies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export default postSlice.reducer;
+export default replySlice.reducer;
