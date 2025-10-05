@@ -2,142 +2,147 @@
 
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "../../lib/slices/postSlice";
+import { useRouter } from "next/navigation"
 import Image from "next/image";
-import Link from "next/link";
 import { Smile, Image as ImageIcon } from "lucide-react";
 
-import "./page.css"
+
+import { createPost, clearReplyTarget } from "../../lib/slices/postSlice";
+import ReplyingTo from "@/app/ui/replying-to";
+import "./compose.css"
 
 export default function Post() {
- const dispatch = useDispatch();
- const { loading, error } = useSelector((state) => state.posts);
+  const router = useRouter()
+  const dispatch = useDispatch();
+  const { replyTarget, loading, error } = useSelector((state) => state.posts);
 
- const [content, setContent] = useState("");
- const [media, setMedia] = useState([]);
+  const [content, setContent] = useState("");
+  const [media, setMedia] = useState([]);
 
- // Handle multiple uploads
- const handleMediaChange = (e) => {
-  const files = Array.from(e.target.files);
-  const newMedia = files.map((file) => ({
-   file,
-   preview: URL.createObjectURL(file),
-  }));
-  setMedia((prev) => [...prev, ...newMedia]);
- };
+  // Handle multiple uploads
+  const handleMediaChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newMedia = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setMedia((prev) => [...prev, ...newMedia]);
+  };
 
- // Remove single file
- const removeMedia = (index) => {
-  setMedia((prev) => prev.filter((_, i) => i !== index));
- };
+  // Remove single file
+  const removeMedia = (index) => {
+    setMedia((prev) => prev.filter((_, i) => i !== index));
+  };
 
 
- const handlePost = () => {
-  if (!content.trim() && media.length === 0) {
-   alert("Post must have at least content or media.");
-   return;
-  }
+  const handlePost = () => {
+    if (!content.trim() && media.length === 0) {
+      alert("Post must have at least content or media.");
+      return;
+    }
 
-  dispatch(createPost({ content, media }))
-   .unwrap()
-   .then(() => {
-    setContent("");
-    setMedia([]);
-   })
-   .catch((err) => {
-    console.error("Failed to post:", err);
-   });
- };
+    dispatch(createPost({ content, media }))
+      .unwrap()
+      .then(() => {
+        setContent("");
+        setMedia([]);
+      })
+      .catch((err) => {
+        console.error("Failed to post:", err);
+      });
+  };
 
- return (
-  <div id="post-component">
-   <div id="post-wrapper">
-    <nav>
-     <Link href="/">
-      <button id="return-button">
-       <svg viewBox="0 0 24 24"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g>
-       </svg>
-      </button>
-     </Link>
+  return (
+    <div id="post-component">
+      <div id="post-wrapper">
+        <nav>
+          <button id="return-button" onClick={() => { router.back() }}>
+            <svg viewBox="0 0 24 24"><g><path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"></path></g>
+            </svg>
+          </button>
 
-     <button id="post-button" onClick={handlePost} disabled={loading}>
-      {loading ? "Posting..." : "Post"}
-     </button>
-    </nav>
+          <button id="post-button" onClick={handlePost} disabled={loading}>
+            {loading ? "Posting..." : "Post"}
+          </button>
+        </nav>
 
-    <div id="textarea-container">
-     <div id="textarea-img-container">
-      <Image
-       className="profile-img"
-       src={"/emma.jpeg"}
-       height={40}
-       width={40}
-       alt="profile-image"
-      />
+        {replyTarget && (
+          <ReplyingTo replyTargetInfo={replyTarget} />
+        )}
 
-      <textarea
-       placeholder="What’s happening?"
-       value={content}
-       onChange={(e) => setContent(e.target.value)}
-       className="post-textarea"
-       rows={3}
-      />
+        <div id="textarea-container">
+          <div id="textarea-img-container">
+            <Image
+              className="profile-img"
+              src={"/emma.jpeg"}
+              height={40}
+              width={40}
+              alt="profile-image"
+            />
 
-     </div>
+            <textarea
+              placeholder="What’s happening?"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="post-textarea"
+              rows={3}
+            />
 
-     {/* Media preview */}
-     {media.length > 0 && (
-      <div className="media-grid">
-       {media.map((m, index) => (
-        <div key={index} className="media-item">
-         {m.file.type.startsWith("image/") ? (
-          <img src={m.preview} alt="preview" />
-         ) : (
-          <video src={m.preview} controls />
-         )}
-         <button
-          className="remove-media"
-          onClick={() => removeMedia(index)}
-         >
-          {/* <X size={18} /> */}
-         </button>
+          </div>
+
+          {/* Media preview */}
+          {media.length > 0 && (
+            <div className="media-grid">
+              {media.map((m, index) => (
+                <div key={index} className="media-item">
+                  {m.file.type.startsWith("image/") ? (
+                    <img src={m.preview} alt="preview" />
+                  ) : (
+                    <video src={m.preview} controls />
+                  )}
+                  <button
+                    className="remove-media"
+                    onClick={() => removeMedia(index)}
+                  >
+                    {/* <X size={18} /> */}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+
+          <div className="toolbar">
+            <div className="tools-left">
+              <label className="icon-btn">
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  hidden
+                  multiple
+                  onChange={handleMediaChange}
+                />
+                <ImageIcon size={20} />
+              </label>
+              <button type="button" className="icon-btn">
+                <Smile size={20} />
+              </button>
+            </div>
+
+            <button
+              className={`post-btn ${content.trim() || media.length ? "active" : ""}`}
+              onClick={handlePost}
+              disabled={!content.trim() && !media.length}
+            >
+              Post
+            </button>
+          </div>
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
-       ))}
       </div>
-     )}
-
-
-     <div className="toolbar">
-      <div className="tools-left">
-       <label className="icon-btn">
-        <input
-         type="file"
-         accept="image/*,video/*"
-         hidden
-         multiple
-         onChange={handleMediaChange}
-        />
-        <ImageIcon size={20} />
-       </label>
-       <button type="button" className="icon-btn">
-        <Smile size={20} />
-       </button>
-      </div>
-
-      <button
-       className={`post-btn ${content.trim() || media.length ? "active" : ""}`}
-       onClick={handlePost}
-       disabled={!content.trim() && !media.length}
-      >
-       Post
-      </button>
-     </div>
-
-     {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
-   </div>
-  </div>
- );
+  );
 }
 
 

@@ -14,7 +14,7 @@ import SideNav from "../../../ui/side-nav";
 
 
 
-import { getPost } from "@/app/lib/slices/postSlice";
+import { getPost, setReplyTarget } from "@/app/lib/slices/postSlice";
 
 
 export default function PostPage() {
@@ -47,7 +47,7 @@ export default function PostPage() {
         {/* <SideNav user={user} /> */}
         <FooterNav />
 
-        <Link href='/compose/post'>
+        <Link href='/compose/post' onClick={() => dispatch(setReplyTarget(post))}>
           {/* <button id="compose-button" onClick={() => setTogglePost(!togglePost)}> */}
           <button id="compose-button">
             <svg viewBox="0 0 24 24" className="post-icon">

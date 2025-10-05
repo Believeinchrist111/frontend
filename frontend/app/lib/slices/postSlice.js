@@ -3,13 +3,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Thunk: Fetch a post from backend
 export const getPost = createAsyncThunk('posts/getPost', async (id) => {
   const res = await fetch(`/api/posts/${id}`, {
-   cache: "no-store", // Always fetch fresh data
+    cache: "no-store", // Always fetch fresh data
   });
- 
+
   if (!res.ok) {
-   throw new Error("Failed to fetch post");
+    throw new Error("Failed to fetch post");
   }
- 
+
   const data = await res.json();
   return data;
 })
@@ -78,11 +78,20 @@ const postSlice = createSlice({
   name: "posts",
   initialState: {
     post: null,
+    replyTarget: null,
     posts: [],       // all posts
     loading: false, // whether fetching or creating is happening
     error: null,    // error messages
   },
-  reducers: {},
+  reducers: {
+    setReplyTarget: (state, action) => {
+      state.replyTarget = action.payload
+    },
+
+    clearReplyTarget: (state) => {
+      state.replyTarget = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       // Fetch a post
@@ -127,4 +136,6 @@ const postSlice = createSlice({
   },
 });
 
+
+export const { setReplyTarget, clearReplyTarget } = postSlice.actions;
 export default postSlice.reducer;
