@@ -8,6 +8,7 @@ import { Smile, Image as ImageIcon } from "lucide-react";
 
 
 import { createPost, clearReplyTarget } from "../../lib/slices/postSlice";
+import { createReply } from "../../lib/slices/replySlice";
 import ReplyingTo from "@/app/ui/replying-to";
 import "./compose.css"
 
@@ -40,16 +41,30 @@ export default function Post() {
       alert("Post must have at least content or media.");
       return;
     }
-
-    dispatch(createPost({ content, media }))
-      .unwrap()
-      .then(() => {
-        setContent("");
-        setMedia([]);
-      })
-      .catch((err) => {
-        console.error("Failed to post:", err);
-      });
+    const replyTargetId = replyTarget.id
+    if (replyTargetId) {
+      dispatch(createReply({ replyTargetId, content, media }))
+        .unwrap()
+        .then(() => {
+          setContent("");
+          setMedia([]);
+          router.back()
+        })
+        .catch((err) => {
+          console.error("Failed to post:", err);
+        });
+    } else {
+      dispatch(createPost({ content, media }))
+        .unwrap()
+        .then(() => {
+          setContent("");
+          setMedia([]);
+          router.back()
+        })
+        .catch((err) => {
+          console.error("Failed to post:", err);
+        });
+    }
   };
 
   return (
@@ -62,7 +77,7 @@ export default function Post() {
           </button>
 
           <button id="post-button" onClick={handlePost} disabled={loading}>
-            {loading ? "Posting..." : "Post"}
+            {replyTarget ? loading ? "Replying..." : "Reply" : loading ? "Posting..." : "Post"}
           </button>
         </nav>
 
@@ -81,7 +96,7 @@ export default function Post() {
             />
 
             <textarea
-              placeholder="What’s happening?"
+              placeholder={replyTarget ? "Post your reply" : "What’s happening?"}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="post-textarea"

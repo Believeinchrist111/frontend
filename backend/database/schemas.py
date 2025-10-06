@@ -110,6 +110,17 @@ class UserResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
     
+
+class PostNested(PostBase):
+    id: int
+    created_at: datetime
+    owner_id: int
+    owner: UserResponse
+    media_items: List[MediaItem] = []
+
+    class Config:
+        from_attributes = True
+
 class PostResponse(PostBase):
     id: int
     created_at: datetime
@@ -118,9 +129,9 @@ class PostResponse(PostBase):
     media_items: List[MediaItem] = []
     
     # Recursive fields
-    replies: List["PostResponse"] = []   # children (thread replies)
-    parent: Optional["PostResponse"] = None  # optional parent post
-    repost: Optional["PostResponse"] = None  # original post if it's a repost
+    replies: List["PostNested"] = []   # children (thread replies)
+    parent: Optional["PostNested"] = None  # optional parent post
+    repost: Optional["PostNested"] = None  # original post if it's a repost
     
     class Config:
         from_attributes = True
@@ -128,7 +139,7 @@ class PostResponse(PostBase):
     # model_config = ConfigDict(arbitrary_types_allowed=True)
         
 # Enable recursion
-PostResponse.model_rebuild()
+# PostResponse.model_rebuild()
 
 
 class CreateReplyRequest(PostBase):
